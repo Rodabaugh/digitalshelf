@@ -48,6 +48,16 @@ func main() {
 	mux.HandleFunc("GET /healthz", readinessEndpoint)
 
 	mux.HandleFunc("POST /users", apiCfg.handlerUsersCreate)
+	mux.HandleFunc("POST /locations", apiCfg.handlerLocationsCreate)
+
+	mux.HandleFunc("GET /users", apiCfg.handlerUsersGet)
+	mux.HandleFunc("GET /users/{user_id}", apiCfg.handlerUserGetByID)
+	mux.HandleFunc("GET /locations", apiCfg.handlerLocationsGet)
+	mux.HandleFunc("GET /locations/{location_id}", apiCfg.handlerLocationsGetByID)
+
+	mux.HandleFunc("GET /search/users", apiCfg.handlerUsersGetByEmail)
+	mux.HandleFunc("GET /search/locations/", apiCfg.handlerLocationsGetByOwner)
+
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 
 	server := &http.Server{
