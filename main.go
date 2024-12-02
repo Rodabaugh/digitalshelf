@@ -49,9 +49,8 @@ func main() {
 
 	mux.HandleFunc("POST /users", apiCfg.handlerUsersCreate)
 	mux.HandleFunc("POST /locations", apiCfg.handlerLocationsCreate)
-
-	mux.HandleFunc("POST /locations/{location_id}/members", apiCfg.handlerAddLocationMember)
-	mux.HandleFunc("DELETE /locations/{location_id}/members", apiCfg.handlerRemoveLocationMember)
+	mux.HandleFunc("POST /cases", apiCfg.handlerCasesCreate)
+	mux.HandleFunc("GET /cases", apiCfg.handlerCaseGet)
 
 	mux.HandleFunc("GET /users", apiCfg.handlerUsersGet)
 	mux.HandleFunc("GET /users/{user_id}", apiCfg.handlerUserGetByID)
@@ -59,6 +58,11 @@ func main() {
 	mux.HandleFunc("GET /locations", apiCfg.handlerLocationsGet)
 	mux.HandleFunc("GET /locations/{location_id}", apiCfg.handlerLocationsGetByID)
 	mux.HandleFunc("GET /locations/{location_id}/members", apiCfg.handlerGetLocationMembers)
+	mux.HandleFunc("GET /locations/{location_id}/cases", apiCfg.handlerCasesGetByLocation)
+	mux.HandleFunc("GET /cases/{case_id}", apiCfg.handlerCaseGetByID)
+
+	mux.HandleFunc("POST /locations/{location_id}/members", apiCfg.handlerAddLocationMember)
+	mux.HandleFunc("DELETE /locations/{location_id}/members", apiCfg.handlerRemoveLocationMember)
 
 	mux.HandleFunc("GET /search/users", apiCfg.handlerUsersGetByEmail)
 	mux.HandleFunc("GET /search/locations/", apiCfg.handlerLocationsGetByOwner)

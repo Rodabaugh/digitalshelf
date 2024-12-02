@@ -72,7 +72,7 @@ func (cfg *apiConfig) handlerLocationsGetByID(w http.ResponseWriter, r *http.Req
 
 	locationID, err := uuid.Parse(locationIDString)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid user ID", err)
+		respondWithError(w, http.StatusBadRequest, "Invalid location ID", err)
 		return
 	}
 

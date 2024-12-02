@@ -10,6 +10,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type Case struct {
+	ID         uuid.UUID
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	Name       string
+	LocationID uuid.UUID
+}
+
 type Location struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
