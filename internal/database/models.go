@@ -32,6 +32,14 @@ type LocationUser struct {
 	JoinedAt   time.Time
 }
 
+type Shelf struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+	CaseID    uuid.UUID
+}
+
 type User struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
