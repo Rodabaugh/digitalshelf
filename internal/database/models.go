@@ -18,6 +18,12 @@ type Location struct {
 	OwnerID   uuid.UUID
 }
 
+type LocationUser struct {
+	LocationID uuid.UUID
+	UserID     uuid.UUID
+	JoinedAt   time.Time
+}
+
 type User struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
