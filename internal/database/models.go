@@ -32,6 +32,20 @@ type LocationUser struct {
 	JoinedAt   time.Time
 }
 
+type Movie struct {
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Title       string
+	Genre       string
+	Actors      string
+	Writer      string
+	Director    string
+	ReleaseDate time.Time
+	Barcode     string
+	ShelfID     uuid.UUID
+}
+
 type Shelf struct {
 	ID        uuid.UUID
 	CreatedAt time.Time

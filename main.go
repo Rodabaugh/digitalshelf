@@ -53,6 +53,8 @@ func main() {
 	mux.HandleFunc("GET /cases", apiCfg.handlerCaseGet)
 	mux.HandleFunc("POST /shelves", apiCfg.handlerShelfCreate)
 	mux.HandleFunc("GET /shelves", apiCfg.handlerShelvesGet)
+	mux.HandleFunc("POST /movies", apiCfg.handlerMovieCreate)
+	mux.HandleFunc("GET /movies", apiCfg.handlerMoviesGet)
 
 	mux.HandleFunc("GET /users", apiCfg.handlerUsersGet)
 	mux.HandleFunc("GET /users/{user_id}", apiCfg.handlerUserGetByID)
@@ -64,6 +66,8 @@ func main() {
 	mux.HandleFunc("GET /cases/{case_id}", apiCfg.handlerCaseGetByID)
 	mux.HandleFunc("GET /cases/{case_id}/shelves", apiCfg.handlerShelvesGetByCase)
 	mux.HandleFunc("GET /shelves/{shelf_id}", apiCfg.handlerShelfGetByID)
+	mux.HandleFunc("GET /shelves/{shelf_id}/movies", apiCfg.handlerMoviesGetByShelf)
+	mux.HandleFunc("GET /movies/{movie_id}", apiCfg.handlerMovieGetByID)
 
 	mux.HandleFunc("POST /locations/{location_id}/members", apiCfg.handlerAddLocationMember)
 	mux.HandleFunc("DELETE /locations/{location_id}/members", apiCfg.handlerRemoveLocationMember)
