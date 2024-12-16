@@ -14,8 +14,9 @@ import (
 )
 
 type apiConfig struct {
-	platform string
-	db       *database.Queries
+	platform  string
+	db        *database.Queries
+	jwtSecret string
 }
 
 func main() {
@@ -30,6 +31,10 @@ func main() {
 	platform := os.Getenv("PLATFORM")
 	if platform != "dev" && platform != "prod" {
 		log.Fatal("PLATFORM must be set to either dev or prod")
+	}
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is not set")
 	}
 
 	dbConn, err := sql.Open("postgres", dbURL)
@@ -48,6 +53,11 @@ func main() {
 	mux.HandleFunc("GET /healthz", readinessEndpoint)
 
 	mux.HandleFunc("POST /users", apiCfg.handlerUsersCreate)
+	mux.HandleFunc("PUT /users", apiCfg.handlerUsersUpdate)
+	mux.HandleFunc("POST /login", apiCfg.handlerLogin)
+	mux.HandleFunc("POST /refresh", apiCfg.handlerRefresh)
+	mux.HandleFunc("POST /revoke", apiCfg.handlerRevoke)
+
 	mux.HandleFunc("POST /locations", apiCfg.handlerLocationsCreate)
 	mux.HandleFunc("POST /cases", apiCfg.handlerCasesCreate)
 	mux.HandleFunc("GET /cases", apiCfg.handlerCaseGet)
