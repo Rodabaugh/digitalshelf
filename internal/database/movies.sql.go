@@ -59,6 +59,29 @@ func (q *Queries) CreateMovie(ctx context.Context, arg CreateMovieParams) (Movie
 	return i, err
 }
 
+const getMovieByBarcode = `-- name: GetMovieByBarcode :one
+SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id FROM movies WHERE barcode = $1
+`
+
+func (q *Queries) GetMovieByBarcode(ctx context.Context, barcode string) (Movie, error) {
+	row := q.db.QueryRowContext(ctx, getMovieByBarcode, barcode)
+	var i Movie
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Title,
+		&i.Genre,
+		&i.Actors,
+		&i.Writer,
+		&i.Director,
+		&i.ReleaseDate,
+		&i.Barcode,
+		&i.ShelfID,
+	)
+	return i, err
+}
+
 const getMovieByID = `-- name: GetMovieByID :one
 SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id FROM movies WHERE id = $1
 `

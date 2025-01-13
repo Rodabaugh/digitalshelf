@@ -85,6 +85,7 @@ func main() {
 
 	mux.HandleFunc("GET /api/search/users", apiCfg.handlerUsersGetByEmail)
 	mux.HandleFunc("GET /api/search/locations/", apiCfg.handlerLocationsGetByOwner)
+	mux.HandleFunc("GET /api/search/movie_barcodes/{barcode}", apiCfg.handlerGetMovieByBarcode)
 
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 

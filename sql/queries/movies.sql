@@ -13,3 +13,6 @@ SELECT * FROM movies WHERE shelf_id = $1;
 
 -- name: GetMovieByID :one
 SELECT * FROM movies WHERE id = $1;
+
+-- name: GetMovieByBarcode :one
+SELECT * FROM movies WHERE barcode = $1;

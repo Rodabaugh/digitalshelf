@@ -108,3 +108,32 @@ func (cfg *apiConfig) handlerMovieGetByID(w http.ResponseWriter, r *http.Request
 		ShelfID:     dbMovie.ShelfID,
 	})
 }
+
+func (cfg *apiConfig) handlerGetMovieByBarcode(w http.ResponseWriter, r *http.Request) {
+	barcode := r.PathValue("barcode")
+	fmt.Println(barcode)
+	if barcode == "" {
+		respondWithError(w, http.StatusBadRequest, "No barcode was provided", fmt.Errorf("no barcode was provided"))
+		return
+	}
+
+	dbMovie, err := cfg.db.GetMovieByBarcode(r.Context(), barcode)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "Movie not found", err)
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, Movie{
+		ID:          dbMovie.ID,
+		Title:       dbMovie.Title,
+		Genre:       dbMovie.Genre,
+		Actors:      dbMovie.Actors,
+		Writer:      dbMovie.Writer,
+		Director:    dbMovie.Director,
+		Barcode:     dbMovie.Barcode,
+		ReleaseDate: dbMovie.ReleaseDate,
+		CreatedAt:   dbMovie.CreatedAt,
+		UpdatedAt:   dbMovie.UpdatedAt,
+		ShelfID:     dbMovie.ShelfID,
+	})
+}
