@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -90,4 +91,5 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		Token:        accessToken,
 		RefreshToken: refreshToken,
 	})
+	fmt.Println("Login successful")
 }

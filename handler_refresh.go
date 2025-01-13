@@ -54,3 +54,26 @@ func (apiCfg *apiConfig) handlerRevoke(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (apiCfg *apiConfig) handlerRevokeSessions(w http.ResponseWriter, r *http.Request) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		respondWithError(w, http.StatusUnauthorized, "Authorization header is required", nil)
+		return
+	}
+
+	tokenStr := authHeader[len("Bearer "):]
+	userID, err := auth.ValidateJWT(tokenStr, apiCfg.jwtSecret)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Invalid token", err)
+		return
+	}
+
+	_, err = apiCfg.db.RevokeRefreshTokenByUserId(r.Context(), userID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't revoke refresh tokens", err)
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, map[string]string{"message": "Sessions revoked successfully"})
+}

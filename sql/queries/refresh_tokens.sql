@@ -15,6 +15,12 @@ updated_at = NOW()
 WHERE token = $1
 RETURNING *;
 
+-- name: RevokeRefreshTokenByUserId :one
+UPDATE refresh_tokens SET revoked_at = NOW(),
+updated_at = NOW()
+WHERE user_id = $1
+RETURNING *;
+
 -- name: GetUserFromRefreshToken :one
 SELECT users.* FROM users
 JOIN refresh_tokens ON users.id = refresh_tokens.user_id
