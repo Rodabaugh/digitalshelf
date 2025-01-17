@@ -137,3 +137,43 @@ func (cfg *apiConfig) handlerGetMovieByBarcode(w http.ResponseWriter, r *http.Re
 		ShelfID:     dbMovie.ShelfID,
 	})
 }
+
+func (cfg *apiConfig) handlerMoviesGetByLocation(w http.ResponseWriter, r *http.Request) {
+	locationIDString := r.PathValue("location_id")
+	if locationIDString == "" {
+		respondWithError(w, http.StatusBadRequest, "No location id was provided", fmt.Errorf("no location id was provided"))
+		return
+	}
+
+	locationID, err := uuid.Parse(locationIDString)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid location ID", err)
+		return
+	}
+
+	dbMovies, err := cfg.db.GetMoviesByLocation(r.Context(), locationID)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "No movies found for that location", err)
+		return
+	}
+
+	movies := []Movie{}
+
+	for _, dbMovie := range dbMovies {
+		movies = append(movies, Movie{
+			ID:          dbMovie.ID,
+			Title:       dbMovie.Title,
+			Genre:       dbMovie.Genre,
+			Actors:      dbMovie.Actors,
+			Writer:      dbMovie.Writer,
+			Director:    dbMovie.Director,
+			Barcode:     dbMovie.Barcode,
+			ReleaseDate: dbMovie.ReleaseDate,
+			CreatedAt:   dbMovie.CreatedAt,
+			UpdatedAt:   dbMovie.UpdatedAt,
+			ShelfID:     dbMovie.ShelfID,
+		})
+	}
+
+	respondWithJSON(w, http.StatusOK, movies)
+}

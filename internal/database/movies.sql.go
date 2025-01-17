@@ -144,6 +144,96 @@ func (q *Queries) GetMovies(ctx context.Context) ([]Movie, error) {
 	return items, nil
 }
 
+const getMoviesByLocation = `-- name: GetMoviesByLocation :many
+SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, shelves.id, shelves.created_at, shelves.updated_at, shelves.name, case_id, cases.id, cases.created_at, cases.updated_at, cases.name, location_id, locations.id, locations.created_at, locations.updated_at, locations.name, owner_id FROM movies
+INNER JOIN shelves
+ON movies.shelf_id = shelves.id
+INNER JOIN cases
+ON shelves.case_id = cases.id
+INNER JOIN locations
+ON cases.location_id = locations.id
+WHERE locations.id = $1
+`
+
+type GetMoviesByLocationRow struct {
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Title       string
+	Genre       string
+	Actors      string
+	Writer      string
+	Director    string
+	ReleaseDate time.Time
+	Barcode     string
+	ShelfID     uuid.UUID
+	ID_2        uuid.UUID
+	CreatedAt_2 time.Time
+	UpdatedAt_2 time.Time
+	Name        string
+	CaseID      uuid.UUID
+	ID_3        uuid.UUID
+	CreatedAt_3 time.Time
+	UpdatedAt_3 time.Time
+	Name_2      string
+	LocationID  uuid.UUID
+	ID_4        uuid.UUID
+	CreatedAt_4 time.Time
+	UpdatedAt_4 time.Time
+	Name_3      string
+	OwnerID     uuid.UUID
+}
+
+func (q *Queries) GetMoviesByLocation(ctx context.Context, id uuid.UUID) ([]GetMoviesByLocationRow, error) {
+	rows, err := q.db.QueryContext(ctx, getMoviesByLocation, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetMoviesByLocationRow
+	for rows.Next() {
+		var i GetMoviesByLocationRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Title,
+			&i.Genre,
+			&i.Actors,
+			&i.Writer,
+			&i.Director,
+			&i.ReleaseDate,
+			&i.Barcode,
+			&i.ShelfID,
+			&i.ID_2,
+			&i.CreatedAt_2,
+			&i.UpdatedAt_2,
+			&i.Name,
+			&i.CaseID,
+			&i.ID_3,
+			&i.CreatedAt_3,
+			&i.UpdatedAt_3,
+			&i.Name_2,
+			&i.LocationID,
+			&i.ID_4,
+			&i.CreatedAt_4,
+			&i.UpdatedAt_4,
+			&i.Name_3,
+			&i.OwnerID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getMoviesByShelf = `-- name: GetMoviesByShelf :many
 SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id FROM movies WHERE shelf_id = $1
 `

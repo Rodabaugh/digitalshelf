@@ -16,3 +16,13 @@ SELECT * FROM movies WHERE id = $1;
 
 -- name: GetMovieByBarcode :one
 SELECT * FROM movies WHERE barcode = $1;
+
+-- name: GetMoviesByLocation :many
+SELECT * FROM movies
+INNER JOIN shelves
+ON movies.shelf_id = shelves.id
+INNER JOIN cases
+ON shelves.case_id = cases.id
+INNER JOIN locations
+ON cases.location_id = locations.id
+WHERE locations.id = $1;

@@ -74,6 +74,7 @@ func main() {
 	mux.HandleFunc("GET /api/locations/{location_id}", apiCfg.handlerLocationsGetByID)
 	mux.HandleFunc("GET /api/locations/{location_id}/members", apiCfg.handlerGetLocationMembers)
 	mux.HandleFunc("GET /api/locations/{location_id}/cases", apiCfg.handlerCasesGetByLocation)
+	mux.HandleFunc("GET /api/locations/{location_id}/movies", apiCfg.handlerMoviesGetByLocation)
 	mux.HandleFunc("GET /api/cases/{case_id}", apiCfg.handlerCaseGetByID)
 	mux.HandleFunc("GET /api/cases/{case_id}/shelves", apiCfg.handlerShelvesGetByCase)
 	mux.HandleFunc("GET /api/shelves/{shelf_id}", apiCfg.handlerShelfGetByID)
