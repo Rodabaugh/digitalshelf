@@ -27,6 +27,12 @@ type Location struct {
 	OwnerID   uuid.UUID
 }
 
+type LocationInvite struct {
+	LocationID uuid.UUID
+	UserID     uuid.UUID
+	InvitedAt  time.Time
+}
+
 type LocationUser struct {
 	LocationID uuid.UUID
 	UserID     uuid.UUID

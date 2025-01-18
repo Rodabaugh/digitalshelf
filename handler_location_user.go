@@ -67,6 +67,12 @@ func (cfg *apiConfig) handlerAddLocationMember(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	err = cfg.authorizeInvited(locationID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to add members to this location", err)
+		return
+	}
+
 	locationUser, err := cfg.db.AddLocationMember(r.Context(), database.AddLocationMemberParams{
 		LocationID: locationID,
 		UserID:     userID,
@@ -95,6 +101,11 @@ func (cfg *apiConfig) handlerGetLocationMembers(w http.ResponseWriter, r *http.R
 	locationID, err := uuid.Parse(locationIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid location ID", err)
+		return
+	}
+
+	if cfg.authorizeOwner(locationID, *r) != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to view members of this location", err)
 		return
 	}
 

@@ -34,6 +34,21 @@ func (cfg *apiConfig) handlerCasesCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if len(params.Name) == 0 {
+		respondWithError(w, http.StatusBadRequest, "Case name is required", nil)
+		return
+	}
+
+	if len(params.LocationID) == 0 {
+		respondWithError(w, http.StatusBadRequest, "Location ID is required", nil)
+		return
+	}
+
+	if err := cfg.authorizeUser(params.LocationID, *r); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to create cases in this location", err)
+		return
+	}
+
 	item_case, err := cfg.db.CreateCase(r.Context(), database.CreateCaseParams{
 		Name:       params.Name,
 		LocationID: params.LocationID,

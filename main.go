@@ -70,9 +70,11 @@ func main() {
 	mux.HandleFunc("GET /api/users", apiCfg.handlerUsersGet)
 	mux.HandleFunc("GET /api/users/{user_id}", apiCfg.handlerUserGetByID)
 	mux.HandleFunc("GET /api/users/{user_id}/locations", apiCfg.handlerGetUserLocations)
+	mux.HandleFunc("GET /api/users/{user_id}/invites", apiCfg.handlerGetUserInvites)
 	mux.HandleFunc("GET /api/locations", apiCfg.handlerLocationsGet)
 	mux.HandleFunc("GET /api/locations/{location_id}", apiCfg.handlerLocationsGetByID)
 	mux.HandleFunc("GET /api/locations/{location_id}/members", apiCfg.handlerGetLocationMembers)
+	mux.HandleFunc("GET /api/locations/{location_id}/invites", apiCfg.handlerGetLocationInvites)
 	mux.HandleFunc("GET /api/locations/{location_id}/cases", apiCfg.handlerCasesGetByLocation)
 	mux.HandleFunc("GET /api/locations/{location_id}/movies", apiCfg.handlerMoviesGetByLocation)
 	mux.HandleFunc("GET /api/cases/{case_id}", apiCfg.handlerCaseGetByID)
@@ -82,7 +84,9 @@ func main() {
 	mux.HandleFunc("GET /api/movies/{movie_id}", apiCfg.handlerMovieGetByID)
 
 	mux.HandleFunc("POST /api/locations/{location_id}/members", apiCfg.handlerAddLocationMember)
+	mux.HandleFunc("POST /api/locations/{location_id}/invites", apiCfg.handlerAddLocationInvite)
 	mux.HandleFunc("DELETE /api/locations/{location_id}/members", apiCfg.handlerRemoveLocationMember)
+	mux.HandleFunc("DELETE /api/locations/{location_id}/invites", apiCfg.handlerRemoveLocationInvite)
 
 	mux.HandleFunc("GET /api/search/users", apiCfg.handlerUsersGetByEmail)
 	mux.HandleFunc("GET /api/search/locations/", apiCfg.handlerLocationsGetByOwner)
