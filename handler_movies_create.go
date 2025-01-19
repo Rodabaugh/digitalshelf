@@ -47,6 +47,18 @@ func (cfg *apiConfig) handlerMovieCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	shelfLocation, err := cfg.db.GetShelfLocation(r.Context(), params.ShelfID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get shelf location", err)
+		return
+	}
+
+	err = cfg.authorizeMember(shelfLocation.ID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to create movies in this location", err)
+		return
+	}
+
 	movie, err := cfg.db.CreateMovie(r.Context(), database.CreateMovieParams{
 		Title:       params.Title,
 		Genre:       params.Genre,

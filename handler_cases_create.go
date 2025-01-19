@@ -44,7 +44,8 @@ func (cfg *apiConfig) handlerCasesCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := cfg.authorizeUser(params.LocationID, *r); err != nil {
+	// Validate user can create cases in this location
+	if err := cfg.authorizeMember(params.LocationID, *r); err != nil {
 		respondWithError(w, http.StatusUnauthorized, "User is not authorized to create cases in this location", err)
 		return
 	}

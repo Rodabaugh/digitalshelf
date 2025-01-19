@@ -105,6 +105,27 @@ func (q *Queries) GetMovieByID(ctx context.Context, id uuid.UUID) (Movie, error)
 	return i, err
 }
 
+const getMovieLocation = `-- name: GetMovieLocation :one
+SELECT locations.id, locations.name
+FROM locations
+JOIN cases ON locations.id = cases.location_id
+JOIN shelves ON cases.id = shelves.case_id
+JOIN movies ON shelves.id = movies.shelf_id
+WHERE movies.id = $1
+`
+
+type GetMovieLocationRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) GetMovieLocation(ctx context.Context, id uuid.UUID) (GetMovieLocationRow, error) {
+	row := q.db.QueryRowContext(ctx, getMovieLocation, id)
+	var i GetMovieLocationRow
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const getMovies = `-- name: GetMovies :many
 SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id FROM movies
 `

@@ -13,7 +13,7 @@ func (cfg *apiConfig) authorizeOwner(locationID uuid.UUID, r http.Request) (err 
 		return fmt.Errorf("location ID is required")
 	}
 
-	userID, err := cfg.getRequesterID(r)
+	userID, err := cfg.getRequesterID(&r)
 	if err != nil {
 		return fmt.Errorf("unable to get requester ID: %w", err)
 	}
@@ -30,12 +30,12 @@ func (cfg *apiConfig) authorizeOwner(locationID uuid.UUID, r http.Request) (err 
 	return nil
 }
 
-func (cfg *apiConfig) authorizeUser(locationID uuid.UUID, r http.Request) (err error) {
+func (cfg *apiConfig) authorizeMember(locationID uuid.UUID, r http.Request) (err error) {
 	if len(locationID) == 0 {
 		return fmt.Errorf("location ID is required")
 	}
 
-	userID, err := cfg.getRequesterID(r)
+	userID, err := cfg.getRequesterID(&r)
 	if err != nil {
 		return fmt.Errorf("unable to get requester ID: %w", err)
 	}
@@ -57,7 +57,7 @@ func (cfg *apiConfig) authorizeInvited(locationID uuid.UUID, r http.Request) (er
 		return fmt.Errorf("location ID is required")
 	}
 
-	userID, err := cfg.getRequesterID(r)
+	userID, err := cfg.getRequesterID(&r)
 	if err != nil {
 		return fmt.Errorf("unable to get requester ID: %w", err)
 	}
@@ -75,7 +75,7 @@ func (cfg *apiConfig) authorizeInvited(locationID uuid.UUID, r http.Request) (er
 	return fmt.Errorf("user is not invited to this location")
 }
 
-func (cfg *apiConfig) getRequesterID(r http.Request) (uuid.UUID, error) {
+func (cfg *apiConfig) getRequesterID(r *http.Request) (uuid.UUID, error) {
 	tokenString, err := auth.GetBearerToken(r.Header)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("unable to get bearer token: %w", err)

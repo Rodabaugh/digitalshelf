@@ -34,6 +34,24 @@ func (cfg *apiConfig) handlerShelfCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if len(params.Name) == 0 {
+		respondWithError(w, http.StatusBadRequest, "Shelf name is required", nil)
+		return
+	}
+
+	// Validate user is authorized to create shelves in this case
+	caseLocation, err := cfg.db.GetCaseLocation(r.Context(), params.CaseID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get case location", err)
+		return
+	}
+
+	err = cfg.authorizeMember(caseLocation.ID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to create shelves in this location", err)
+		return
+	}
+
 	shelf, err := cfg.db.CreateShelf(r.Context(), database.CreateShelfParams{
 		Name:   params.Name,
 		CaseID: params.CaseID,

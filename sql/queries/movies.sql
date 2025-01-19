@@ -26,3 +26,11 @@ ON shelves.case_id = cases.id
 INNER JOIN locations
 ON cases.location_id = locations.id
 WHERE locations.id = $1;
+
+-- name: GetMovieLocation :one
+SELECT locations.id, locations.name
+FROM locations
+JOIN cases ON locations.id = cases.location_id
+JOIN shelves ON cases.id = shelves.case_id
+JOIN movies ON shelves.id = movies.shelf_id
+WHERE movies.id = $1;

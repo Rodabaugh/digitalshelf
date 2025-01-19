@@ -67,7 +67,15 @@ func (cfg *apiConfig) handlerAddLocationMember(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err = cfg.authorizeInvited(locationID, *r)
+	// Check if the requester is the owner or an invited user.
+	// The below calls returns a nil error if the user is authorized.
+	isOwner := cfg.authorizeOwner(locationID, *r)
+	isInvited := cfg.authorizeInvited(locationID, *r)
+	if isOwner != nil && isInvited != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to join location", fmt.Errorf("user is not authorized to join location"))
+		return
+	}
+
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "User is not authorized to add members to this location", err)
 		return
@@ -104,6 +112,7 @@ func (cfg *apiConfig) handlerGetLocationMembers(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	// Validate user is the owner of the location.
 	if cfg.authorizeOwner(locationID, *r) != nil {
 		respondWithError(w, http.StatusUnauthorized, "User is not authorized to view members of this location", err)
 		return
@@ -140,6 +149,17 @@ func (cfg *apiConfig) handlerGetUserLocations(w http.ResponseWriter, r *http.Req
 	userID, err := uuid.Parse(userIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID", err)
+		return
+	}
+
+	// Validate the user is authorized to view locations for this user.
+	requestUserID, err := cfg.getRequesterID(r)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get requester ID", err)
+		return
+	}
+	if userID != requestUserID {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to view locations for this user", err)
 		return
 	}
 
@@ -192,6 +212,15 @@ func (cfg *apiConfig) handlerRemoveLocationMember(w http.ResponseWriter, r *http
 	userID, err := uuid.Parse(params.UserID)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID", err)
+		return
+	}
+
+	// Check if the requester is the owner or an invited user.
+	// The below calls returns a nil error if the user is authorized.
+	isOwner := cfg.authorizeOwner(locationID, *r)
+	isInvited := cfg.authorizeInvited(locationID, *r)
+	if isOwner != nil && isInvited != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to remove this user", fmt.Errorf("user is not authorized to remove this user"))
 		return
 	}
 

@@ -54,6 +54,25 @@ func (q *Queries) GetCaseByID(ctx context.Context, id uuid.UUID) (Case, error) {
 	return i, err
 }
 
+const getCaseLocation = `-- name: GetCaseLocation :one
+SELECT locations.id, locations.name
+FROM locations
+JOIN cases ON locations.id = cases.location_id
+WHERE cases.id = $1
+`
+
+type GetCaseLocationRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) GetCaseLocation(ctx context.Context, id uuid.UUID) (GetCaseLocationRow, error) {
+	row := q.db.QueryRowContext(ctx, getCaseLocation, id)
+	var i GetCaseLocationRow
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const getCases = `-- name: GetCases :many
 SELECT id, created_at, updated_at, name, location_id FROM cases
 `

@@ -42,6 +42,18 @@ func (cfg *apiConfig) handlerShelvesGetByCase(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	// Validate user is authorized to get shelves at the case's location.
+	caseLocation, err := cfg.db.GetCaseLocation(r.Context(), caseID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get case location", err)
+		return
+	}
+
+	if err := cfg.authorizeMember(caseLocation.ID, *r); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to get shelves at this case", err)
+		return
+	}
+
 	dbShelves, err := cfg.db.GetShelvesByCase(r.Context(), caseID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No shelves found for that case", err)
@@ -73,6 +85,18 @@ func (cfg *apiConfig) handlerShelfGetByID(w http.ResponseWriter, r *http.Request
 	shelfID, err := uuid.Parse(shelfIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid shelf ID", err)
+		return
+	}
+
+	// Validate user is authorized to get shelves at the shelf's location.
+	shelfLocation, err := cfg.db.GetShelfLocation(r.Context(), shelfID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get shelf location", err)
+		return
+	}
+
+	if err := cfg.authorizeMember(shelfLocation.ID, *r); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to get this shelf", err)
 		return
 	}
 

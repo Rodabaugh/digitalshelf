@@ -48,6 +48,19 @@ func (cfg *apiConfig) handlerMoviesGetByShelf(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	// Validate user is authorized to get movies at the location of shelf.
+	shelfLocation, err := cfg.db.GetShelfLocation(r.Context(), shelfID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get shelf location", err)
+		return
+	}
+
+	err = cfg.authorizeMember(shelfLocation.ID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to gets movies at the location of that shelf", err)
+		return
+	}
+
 	dbMovies, err := cfg.db.GetMoviesByShelf(r.Context(), shelfID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No movies found for that shelf", err)
@@ -85,6 +98,19 @@ func (cfg *apiConfig) handlerMovieGetByID(w http.ResponseWriter, r *http.Request
 	movieID, err := uuid.Parse(movieIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid movie ID", err)
+		return
+	}
+
+	// Validate user is authorized to get movies at the location of requested movie.
+	movieLocation, err := cfg.db.GetMovieLocation(r.Context(), movieID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get movie location", err)
+		return
+	}
+
+	err = cfg.authorizeMember(movieLocation.ID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to get movies at this location", err)
 		return
 	}
 
@@ -148,6 +174,13 @@ func (cfg *apiConfig) handlerMoviesGetByLocation(w http.ResponseWriter, r *http.
 	locationID, err := uuid.Parse(locationIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid location ID", err)
+		return
+	}
+
+	// Validate user is permitted to get movies for the location.
+	err = cfg.authorizeMember(locationID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to gets movies for this location", err)
 		return
 	}
 

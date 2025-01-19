@@ -42,6 +42,17 @@ func (cfg *apiConfig) handlerLocationsGetByOwner(w http.ResponseWriter, r *http.
 		return
 	}
 
+	// Validate requester ID is the owner_id provided
+	requesterID, err := cfg.getRequesterID(r)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get requester ID", err)
+		return
+	}
+	if ownerID != requesterID {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to view locations owned by other users", err)
+		return
+	}
+
 	dbLocations, err := cfg.db.GetLocationsByOwner(r.Context(), ownerID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No locations owned by that user", err)
@@ -73,6 +84,13 @@ func (cfg *apiConfig) handlerLocationsGetByID(w http.ResponseWriter, r *http.Req
 	locationID, err := uuid.Parse(locationIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid location ID", err)
+		return
+	}
+
+	// Validate user is a member of the location.
+	err = cfg.authorizeMember(locationID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to view this location", err)
 		return
 	}
 

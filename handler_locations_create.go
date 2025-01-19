@@ -34,6 +34,18 @@ func (cfg *apiConfig) handlerLocationsCreate(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	// Validate user is logged in and creating location for themselves
+	requestUserID, err := cfg.getRequesterID(r)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to get requester ID", err)
+		return
+	}
+
+	if requestUserID != params.OwnerID {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to create locations for other users", nil)
+		return
+	}
+
 	location, err := cfg.db.CreateLocation(r.Context(), database.CreateLocationParams{
 		Name:    params.Name,
 		OwnerID: params.OwnerID,

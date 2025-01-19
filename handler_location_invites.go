@@ -147,7 +147,7 @@ func (cfg *apiConfig) handlerGetUserInvites(w http.ResponseWriter, r *http.Reque
 	}
 
 	// Validate that the user is permitted to get the invites for this user.
-	requesterID, err := cfg.getRequesterID(*r)
+	requesterID, err := cfg.getRequesterID(r)
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "User is not authorized to view invites for this user", err)
 		return

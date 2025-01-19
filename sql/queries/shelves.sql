@@ -13,3 +13,10 @@ SELECT * FROM shelves WHERE case_id = $1;
 
 -- name: GetShelfByID :one
 SELECT * FROM shelves WHERE id = $1;
+
+-- name: GetShelfLocation :one
+SELECT locations.id, locations.name
+FROM locations
+JOIN cases ON locations.id = cases.location_id
+JOIN shelves ON cases.id = shelves.case_id
+WHERE shelves.id = $1;

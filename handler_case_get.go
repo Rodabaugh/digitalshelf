@@ -42,6 +42,11 @@ func (cfg *apiConfig) handlerCasesGetByLocation(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	if err := cfg.authorizeMember(locationID, *r); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to get cases at this location", err)
+		return
+	}
+
 	dbCases, err := cfg.db.GetCasesByLocation(r.Context(), locationID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No cases found for that location", err)

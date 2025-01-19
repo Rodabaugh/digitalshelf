@@ -54,6 +54,26 @@ func (q *Queries) GetShelfByID(ctx context.Context, id uuid.UUID) (Shelf, error)
 	return i, err
 }
 
+const getShelfLocation = `-- name: GetShelfLocation :one
+SELECT locations.id, locations.name
+FROM locations
+JOIN cases ON locations.id = cases.location_id
+JOIN shelves ON cases.id = shelves.case_id
+WHERE shelves.id = $1
+`
+
+type GetShelfLocationRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) GetShelfLocation(ctx context.Context, id uuid.UUID) (GetShelfLocationRow, error) {
+	row := q.db.QueryRowContext(ctx, getShelfLocation, id)
+	var i GetShelfLocationRow
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const getShelves = `-- name: GetShelves :many
 SELECT id, created_at, updated_at, name, case_id FROM shelves
 `
