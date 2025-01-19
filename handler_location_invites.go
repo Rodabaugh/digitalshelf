@@ -179,18 +179,6 @@ func (cfg *apiConfig) handlerGetUserInvites(w http.ResponseWriter, r *http.Reque
 }
 
 func (cfg *apiConfig) handlerRemoveLocationInvite(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		UserID string `json:"user_id"`
-	}
-
-	decoder := json.NewDecoder(r.Body)
-	params := parameters{}
-	err := decoder.Decode(&params)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Was unable to decode parameters", err)
-		return
-	}
-
 	locationIDString := r.PathValue("location_id")
 	if locationIDString == "" {
 		respondWithError(w, http.StatusBadRequest, "No location id was provided", fmt.Errorf("no location id was provided"))
@@ -203,7 +191,9 @@ func (cfg *apiConfig) handlerRemoveLocationInvite(w http.ResponseWriter, r *http
 		return
 	}
 
-	userID, err := uuid.Parse(params.UserID)
+	userIDString := r.PathValue("user_id")
+
+	userID, err := uuid.Parse(userIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID", err)
 		return
@@ -213,7 +203,7 @@ func (cfg *apiConfig) handlerRemoveLocationInvite(w http.ResponseWriter, r *http
 	// The below calls returns a nil error if the user is authorized.
 	isOwner := cfg.authorizeOwner(locationID, *r)
 	isInvited := cfg.authorizeInvited(locationID, *r)
-	if isOwner != nil || isInvited != nil {
+	if isOwner != nil && isInvited != nil {
 		respondWithError(w, http.StatusUnauthorized, "User is not authorized to remove this invite", fmt.Errorf("user is not authorized to remove this invite"))
 		return
 	}

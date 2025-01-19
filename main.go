@@ -85,8 +85,8 @@ func main() {
 
 	mux.HandleFunc("DELETE /api/locations/{location_id}/members/{user_id}", apiCfg.handlerRemoveLocationMember)
 	mux.HandleFunc("POST /api/locations/{location_id}/members", apiCfg.handlerAddLocationMember)
+	mux.HandleFunc("DELETE /api/locations/{location_id}/invites/{user_id}", apiCfg.handlerRemoveLocationInvite)
 	mux.HandleFunc("POST /api/locations/{location_id}/invites", apiCfg.handlerAddLocationInvite)
-	mux.HandleFunc("DELETE /api/locations/{location_id}/invites", apiCfg.handlerRemoveLocationInvite)
 
 	mux.HandleFunc("GET /api/search/users", apiCfg.handlerUsersGetByEmail)
 	mux.HandleFunc("GET /api/search/locations/", apiCfg.handlerLocationsGetByOwner)

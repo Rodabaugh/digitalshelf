@@ -202,7 +202,6 @@ func (cfg *apiConfig) handlerRemoveLocationMember(w http.ResponseWriter, r *http
 	if userIDString == "" {
 		respondWithError(w, http.StatusBadRequest, "No user id was provided", fmt.Errorf("no user id was provided"))
 	}
-	println(userIDString)
 
 	locationID, err := uuid.Parse(locationIDString)
 	if err != nil {
