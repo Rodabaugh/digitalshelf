@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/Rodabaugh/digitalshelf/internal/database"
@@ -76,11 +77,6 @@ func (cfg *apiConfig) handlerAddLocationMember(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "User is not authorized to add members to this location", err)
-		return
-	}
-
 	locationUser, err := cfg.db.AddLocationMember(r.Context(), database.AddLocationMemberParams{
 		LocationID: locationID,
 		UserID:     userID,
@@ -88,6 +84,17 @@ func (cfg *apiConfig) handlerAddLocationMember(w http.ResponseWriter, r *http.Re
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Unable to add user to location", err)
 		return
+	}
+
+	if isInvited == nil {
+		// If the user was invited, we need to remove the invite.
+		err = cfg.db.RemoveLocationInvite(r.Context(), database.RemoveLocationInviteParams{
+			UserID:     userID,
+			LocationID: locationID,
+		})
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "unable to remove location invite: %v", err)
+		}
 	}
 
 	respondWithJSON(w, http.StatusCreated, response{
@@ -185,23 +192,17 @@ func (cfg *apiConfig) handlerGetUserLocations(w http.ResponseWriter, r *http.Req
 }
 
 func (cfg *apiConfig) handlerRemoveLocationMember(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		UserID string `json:"user_id"`
-	}
-
-	decoder := json.NewDecoder(r.Body)
-	params := parameters{}
-	err := decoder.Decode(&params)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Was unable to decode parameters", err)
-		return
-	}
-
 	locationIDString := r.PathValue("location_id")
 	if locationIDString == "" {
 		respondWithError(w, http.StatusBadRequest, "No location id was provided", fmt.Errorf("no location id was provided"))
 		return
 	}
+
+	userIDString := r.PathValue("user_id")
+	if userIDString == "" {
+		respondWithError(w, http.StatusBadRequest, "No user id was provided", fmt.Errorf("no user id was provided"))
+	}
+	println(userIDString)
 
 	locationID, err := uuid.Parse(locationIDString)
 	if err != nil {
@@ -209,7 +210,7 @@ func (cfg *apiConfig) handlerRemoveLocationMember(w http.ResponseWriter, r *http
 		return
 	}
 
-	userID, err := uuid.Parse(params.UserID)
+	userID, err := uuid.Parse(userIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID", err)
 		return
@@ -218,8 +219,8 @@ func (cfg *apiConfig) handlerRemoveLocationMember(w http.ResponseWriter, r *http
 	// Check if the requester is the owner or an invited user.
 	// The below calls returns a nil error if the user is authorized.
 	isOwner := cfg.authorizeOwner(locationID, *r)
-	isInvited := cfg.authorizeInvited(locationID, *r)
-	if isOwner != nil && isInvited != nil {
+	isMember := cfg.authorizeMember(locationID, *r)
+	if isOwner != nil && isMember != nil {
 		respondWithError(w, http.StatusUnauthorized, "User is not authorized to remove this user", fmt.Errorf("user is not authorized to remove this user"))
 		return
 	}
