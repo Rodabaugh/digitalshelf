@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -18,7 +19,9 @@ func (apiCfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	fmt.Println("refreshToken: ", refreshToken)
 	user, err := apiCfg.db.GetUserFromRefreshToken(r.Context(), refreshToken)
+	fmt.Printf("user: %v\n", user)
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Couldn't get user for refresh token", err)
 		return

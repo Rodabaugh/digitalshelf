@@ -54,11 +54,9 @@ func (apiCfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Reque
 
 	respondWithJSON(w, http.StatusOK, response{
 		User: User{
-			ID:        user.ID,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-			Email:     user.Email,
-			Name:      user.Name,
+			ID:    user.ID,
+			Email: user.Email,
+			Name:  user.Name,
 		},
 	})
 }

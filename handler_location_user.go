@@ -215,7 +215,7 @@ func (cfg *apiConfig) handlerRemoveLocationMember(w http.ResponseWriter, r *http
 		return
 	}
 
-	// Check if the requester is the owner or an invited user.
+	// Check if the requester is the owner or a member.
 	// The below calls returns a nil error if the user is authorized.
 	isOwner := cfg.authorizeOwner(locationID, *r)
 	isMember := cfg.authorizeMember(locationID, *r)
