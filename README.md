@@ -1,21 +1,65 @@
 # Digital Shelf
-So far, this project is the beginning of a backend CRUD app that stores an inventory of items of shelves. The idea being, that it'll help you know what books, movies, music, and TV shows you have on your shelves and where it is. I'm also planning on adding a wishlist for things that you would like to get.
 
-This project is in its very early stages, and in a very alpha state.
+Digital Shelf is a RESTful API backend that is used to inventory items on shelves. The idea being that it'll help you know what books, movies, music, and TV shows that you have on your shelves. It will also tell you where each item is located. This allows for keeping track of the items in your personal library/collection. I am also planning on adding a wishlist feature, so that you'll know what items you would like to get for your collection. 
 
-# Setup
+This project is still a work in progress and currently only supports movies, but support for other items is in the works.
 
-I'm not going to include setup steps yet, as this project is not in a usable state. This will change in the near future.
+This project was designed for personal use, but has a good foundation that supports many users and locations. The same backend server could be used to track library items across a great many locations with a large number of users. The backend is built in Go and uses a PostgreSQL database, and is very fast.
 
-If you want to figure out how to get the project running ignoring that fact, I will include that environment variables are used for configuration. Create a .env file in the root of the project dir. It should look like the one below.
+# Frontend/Client
+
+This is just the backend of the application, but I have also written a CLI frontend for the application. I would like to create a webapp interface or a mobile app for this at some point, but haven't gotten to that point yet. If you would like to create your own frontend, please feel free to do so. Documentation for the REST API can be found below.
+
+The CLI interface I wrote for this application can be found at: <https://github.com/Rodabaugh/digitalshelf-cli/>
+
+# Manual Setup
+
+## Prerequisites
+
+To run this project, you will need:
+1. A PostgreSQL database (this can be on the same server as the backend, if you would like)
+2. A backend server with Go installed.
+
+## Get the repo
+
+1. Clone the repo `git clone https://github.com/Rodabaugh/digitalshelf/`
+2. Navigate to the program dir `cd digitalshelf`
+
+## Configuration
+
+Environment variables are used for configuration. Create a .env file in the root of the project dir. You need to specify your DB_URL, PLATFORM, and JWT_SECRET. DB_URL is the url for your database. Platform can either be "prod" or "dev". You can generate your JWT_SECRET with `openssl rand -base64 64`. Your `.env` file should look something like the one below. Please be sure to create your own JWT_SECRET and use your own DB_URL.
 ```
-PLATFORM="dev"
-DB_URL=YOUR DATABASE HERE
+PLATFORM="prod"
+DB_URL="postgres://postgresUser:postgresPass@localhost:5432/digitalshelf?sslmode=disable"
+JWT_SECRET="ALItvAPa64TLZ4wjqWsaiVW3ZrQ7ZT209sAkIsos8K3p6ldeMb+K5Ji5j90kI4cQ
+k0I6WY6KgXALHP7EjeLXOw=="
 ```
+
+## Setting up the database
+
+Goose is used to manage the database migrations. Install goose with `go install github.com/pressly/goose/v3/cmd/goose@latest`
+
+Navigate to the sql/schema dir `cd sql/schema`
+
+Setup the database using goose `goose postgres <connection_string> up` e.g `goose postgres postgres://postgresUser:postgresPass@localhost:5432/digitalshelf?sslmode=disable up`
+
+## Compile and run the backend
+
+Once your .env has been configured, and your database is setup, it is time to build and run the backend.
+
+Build the application with `go build`
+
+Run the backend application with `./digitalshelf`
+
+Once the backend server is running, you can setup your server to run the backend application as a service. 
+
+## Success
+
+At this point, the DigitalShelf backend should be running on your server. From here, you can use the CLI frontend (<https://github.com/Rodabaugh/digitalshelf-cli/>) to interact with the backend, or write your own frontend.
 
 # API Endpoints
 
-## Overview
+## Design Overview
 
 Items (such as movies) are stored on shelves. Those shelves are in cases. Those cases are located at a location. The location is owned by a user, and has users as members. This allows you to know what shelf an item is on, which case that shelf is in, and where the case is located.
 
