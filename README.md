@@ -70,8 +70,8 @@ Request body:
 ```json
 {
     "name": "John Smith",
-	"email": "jsmith@example.com",
-	"password": "Password123"
+    "email": "jsmith@example.com",
+    "password": "Password123"
 }
 ```
 
@@ -80,7 +80,7 @@ Response body:
 {
     "id": "d2db758c-bd84-4c9c-95a1-93e60c74c9c3",
     "name": "John Smith",
-	"email": "jsmith@example.com"
+    "email": "jsmith@example.com"
 }
 ```
 
@@ -93,7 +93,7 @@ Request body:
 ```json
 {
 	"email": "jsmith@example.com",
-	"password": "Password123"
+    "password": "Password123"
 }
 ```
 
@@ -102,7 +102,7 @@ Response body:
 {
     "id": "d2db758c-bd84-4c9c-95a1-93e60c74c9c3",
     "name": "John Smith",
-	"email": "jsmith@example.com"
+    "email": "jsmith@example.com"
 }
 ```
 
