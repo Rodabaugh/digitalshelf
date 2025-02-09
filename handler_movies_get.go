@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -187,6 +188,49 @@ func (cfg *apiConfig) handlerMoviesGetByLocation(w http.ResponseWriter, r *http.
 	dbMovies, err := cfg.db.GetMoviesByLocation(r.Context(), locationID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No movies found for that location", err)
+		return
+	}
+
+	movies := []Movie{}
+
+	for _, dbMovie := range dbMovies {
+		movies = append(movies, Movie{
+			ID:          dbMovie.ID,
+			Title:       dbMovie.Title,
+			Genre:       dbMovie.Genre,
+			Actors:      dbMovie.Actors,
+			Writer:      dbMovie.Writer,
+			Director:    dbMovie.Director,
+			Barcode:     dbMovie.Barcode,
+			ReleaseDate: dbMovie.ReleaseDate,
+			CreatedAt:   dbMovie.CreatedAt,
+			UpdatedAt:   dbMovie.UpdatedAt,
+			ShelfID:     dbMovie.ShelfID,
+		})
+	}
+
+	respondWithJSON(w, http.StatusOK, movies)
+}
+
+func (cfg *apiConfig) handlerSearchMovies(w http.ResponseWriter, r *http.Request) {
+	var requestBody struct {
+		Query string `json:"query"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload", err)
+		return
+	}
+
+	query := requestBody.Query
+	if query == "" {
+		respondWithError(w, http.StatusBadRequest, "No search query was provided", fmt.Errorf("no search query was provided"))
+		return
+	}
+
+	dbMovies, err := cfg.db.SearchMovies(r.Context(), query)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unable to search movies", err)
 		return
 	}
 

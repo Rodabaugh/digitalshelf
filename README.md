@@ -92,7 +92,7 @@ Requires token in auth headers.
 Request body:
 ```json
 {
-	"email": "jsmith@example.com",
+    "email": "jsmith@example.com",
     "password": "Password123"
 }
 ```

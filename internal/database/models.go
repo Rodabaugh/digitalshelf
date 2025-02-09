@@ -51,6 +51,7 @@ type Movie struct {
 	ReleaseDate time.Time
 	Barcode     string
 	ShelfID     uuid.UUID
+	Search      interface{}
 }
 
 type RefreshToken struct {

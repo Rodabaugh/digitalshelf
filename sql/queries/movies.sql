@@ -34,3 +34,14 @@ JOIN cases ON locations.id = cases.location_id
 JOIN shelves ON cases.id = shelves.case_id
 JOIN movies ON shelves.id = movies.shelf_id
 WHERE movies.id = $1;
+
+-- name: SearchMovies :many
+SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id,
+    CAST(
+        ts_rank(search, websearch_to_tsquery('english', $1)) + 
+        ts_rank(search, websearch_to_tsquery('simple', $1)) AS float8
+    ) AS rank
+FROM movies
+WHERE search @@ websearch_to_tsquery('english', $1)
+OR search @@ websearch_to_tsquery('simple', $1)
+ORDER BY rank DESC;
