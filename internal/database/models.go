@@ -71,6 +71,22 @@ type Shelf struct {
 	CaseID    uuid.UUID
 }
 
+type Show struct {
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Title       string
+	Season      int32
+	Genre       string
+	Actors      string
+	Writer      string
+	Director    string
+	ReleaseDate time.Time
+	Barcode     string
+	ShelfID     uuid.UUID
+	Search      interface{}
+}
+
 type User struct {
 	ID             uuid.UUID
 	CreatedAt      time.Time

@@ -711,3 +711,217 @@ Response body:
     "updated_at": "2025-01-18T17:27:56.484798Z"
 }
 ```
+
+### GET /api/search/movie
+
+Searches movies for a search term. Database searches title, actors, genre, writer, and director.
+
+Auth token is required. The user must be a member or the owner of the location.
+
+Request body:
+```json
+{
+  "query":"Dune",
+  "location_id":"5722d862-97d8-409c-91e1-3281ff7882aa"
+}
+```
+
+Response body:
+```json
+[
+  {
+      "id": "97a940ab-bc47-4cd9-861b-f9f9d7e2e333",
+      "title": "Dune: Part Two",
+      "genre": "Sci-fi",
+      "actors": "Timothée Chalamet, Zendayam, Rebecca Ferguson",
+      "writer": "Denis Villeneuve, Jon Spaihts, Frank Herbert",
+      "director": "Denis Villeneuve",
+      "barcode": "883929802357",
+      "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+      "release_date": "2024-03-01T00:00:00Z",
+      "created_at": "2025-01-18T17:27:56.484798Z",
+      "updated_at": "2025-01-18T17:27:56.484798Z"
+  }
+]
+```
+
+## Shows
+
+### POST /api/shows
+Add a show to the database. A shelf ID must be provided, as the shelf is where the show is located.
+
+Auth token is required. The requesting user must be a member of the shelf's location.
+
+Request body:
+```json
+{
+  "title": "Person of Interest",
+  "season": 2,
+  "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+  "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+  "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+  "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+  "barcode": "883929278596",
+  "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+  "release_date": "2013-05-09T00:00:00Z"
+}
+```
+
+Response body:
+```json
+{
+  "id": "fc3bece2-5810-4176-ac4f-b5ecbb50d1f0",
+  "title": "Person of Interest",
+  "season": 2,
+  "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+  "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+  "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+  "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+  "barcode": "883929278596",
+  "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+  "release_date": "2013-05-09T00:00:00Z",
+  "created_at": "2025-01-26T15:10:22.03059Z",
+  "updated_at": "2025-01-26T15:10:22.03059Z"
+}
+```
+
+### GET /api/shows
+
+Not documented yet.
+
+### GET /api/shelves/{shelf_id}/shows
+Gets a list of shows on the shelf.
+
+Auth token is required. The user must be a member of the shelf's location.
+
+Request body: None
+
+Response body:
+```json
+[
+  {
+    "id": "fc3bece2-5810-4176-ac4f-b5ecbb50d1f0",
+    "title": "Person of Interest",
+    "season": 2,
+    "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+    "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+    "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+    "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+    "barcode": "883929278596",
+    "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+    "release_date": "2013-05-09T00:00:00Z",
+    "created_at": "2025-01-26T15:10:22.03059Z",
+    "updated_at": "2025-01-26T15:10:22.03059Z"
+  }
+]
+```
+
+### GET /api/shows/{show_id}
+Provides details about the show object.
+
+Auth token is required. The user must be a member of the show's location.
+
+Request body: None
+
+Response body:
+```json
+{
+  "id": "fc3bece2-5810-4176-ac4f-b5ecbb50d1f0",
+  "title": "Person of Interest",
+  "season": 2,
+  "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+  "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+  "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+  "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+  "barcode": "883929278596",
+  "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+  "release_date": "2013-05-09T00:00:00Z",
+  "created_at": "2025-01-26T15:10:22.03059Z",
+  "updated_at": "2025-01-26T15:10:22.03059Z"
+}
+```
+
+### GET /api/locations/{location_id}/shows
+Gets a list of shows at the location ID.
+
+Auth token is required. The user must be a member or the owner of the location.
+
+Request body: None
+
+Response body:
+```json
+[
+  {
+    "id": "fc3bece2-5810-4176-ac4f-b5ecbb50d1f0",
+    "title": "Person of Interest",
+    "season": 2,
+    "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+    "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+    "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+    "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+    "barcode": "883929278596",
+    "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+    "release_date": "2013-05-09T00:00:00Z",
+    "created_at": "2025-01-26T15:10:22.03059Z",
+    "updated_at": "2025-01-26T15:10:22.03059Z"
+  }
+]
+```
+
+### GET /api/search/show_barcodes/{barcode}
+
+Searches shows for items matching the barcode.
+
+Request body: None
+
+Response body:
+```json
+{
+  "id": "fc3bece2-5810-4176-ac4f-b5ecbb50d1f0",
+  "title": "Person of Interest",
+  "season": 2,
+  "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+  "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+  "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+  "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+  "barcode": "883929278596",
+  "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+  "release_date": "2013-05-09T00:00:00Z",
+  "created_at": "2025-01-26T15:10:22.03059Z",
+  "updated_at": "2025-01-26T15:10:22.03059Z"
+}
+```
+
+### GET /api/search/show
+
+Searches shows for a search term. Database searches title, actors, genre, writer, and director.
+
+Auth token is required. The user must be a member or the owner of the location.
+
+Request body:
+```json
+{
+  "query":"Action",
+  "location_id":"5722d862-97d8-409c-91e1-3281ff7882aa"
+}
+```
+
+Response body:
+```json
+[
+  {
+    "id": "fc3bece2-5810-4176-ac4f-b5ecbb50d1f0",
+    "title": "Person of Interest",
+    "season": 2,
+    "genre": "Action, Crime, Drama, Mystery, Sci-Fi, Thriller",
+    "actors": "Jim Caviezel, Taraji P. Henson, Kevin Chapman, Michael Emerson",
+    "writer": "Jonathan Nolan, Denise Thé, Sean Hennen, Erik Mountain",
+    "director": "Richard J. Lewis, Jon Cassar, Jeffrey Hunt, James Whitmore Jr., Félix Alcalá, Frederick E. O. Toye, Helen Shaver, Clark Johnson, Stephen Surjik, Chris Fisher, John Dahl, Jonathan Nolan, Kenneth Fink, Tricia Brock",
+    "barcode": "883929278596",
+    "shelf_id": "86a210c7-2c90-4c64-b481-9059b4b376db",
+    "release_date": "2013-05-09T00:00:00Z",
+    "created_at": "2025-01-26T15:10:22.03059Z",
+    "updated_at": "2025-01-26T15:10:22.03059Z"
+  }
+]
+```

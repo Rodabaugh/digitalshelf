@@ -66,6 +66,8 @@ func main() {
 	mux.HandleFunc("GET /api/shelves", apiCfg.handlerShelvesGet)
 	mux.HandleFunc("POST /api/movies", apiCfg.handlerMovieCreate)
 	mux.HandleFunc("GET /api/movies", apiCfg.handlerMoviesGet)
+	mux.HandleFunc("POST /api/shows", apiCfg.handlerShowCreate)
+	mux.HandleFunc("GET /api/shows", apiCfg.handlerShowsGet)
 
 	mux.HandleFunc("GET /api/users", apiCfg.handlerUsersGet)
 	mux.HandleFunc("GET /api/users/{user_id}", apiCfg.handlerUserGetByID)
@@ -77,11 +79,14 @@ func main() {
 	mux.HandleFunc("GET /api/locations/{location_id}/invites", apiCfg.handlerGetLocationInvites)
 	mux.HandleFunc("GET /api/locations/{location_id}/cases", apiCfg.handlerCasesGetByLocation)
 	mux.HandleFunc("GET /api/locations/{location_id}/movies", apiCfg.handlerMoviesGetByLocation)
+	mux.HandleFunc("GET /api/locations/{location_id}/shows", apiCfg.handlerShowsGetByLocation)
 	mux.HandleFunc("GET /api/cases/{case_id}", apiCfg.handlerCaseGetByID)
 	mux.HandleFunc("GET /api/cases/{case_id}/shelves", apiCfg.handlerShelvesGetByCase)
 	mux.HandleFunc("GET /api/shelves/{shelf_id}", apiCfg.handlerShelfGetByID)
 	mux.HandleFunc("GET /api/shelves/{shelf_id}/movies", apiCfg.handlerMoviesGetByShelf)
 	mux.HandleFunc("GET /api/movies/{movie_id}", apiCfg.handlerMovieGetByID)
+	mux.HandleFunc("GET /api/shelves/{shelf_id}/shows", apiCfg.handlerShowsGetByShelf)
+	mux.HandleFunc("GET /api/shows/{show_id}", apiCfg.handlerShowGetByID)
 
 	mux.HandleFunc("DELETE /api/locations/{location_id}/members/{user_id}", apiCfg.handlerRemoveLocationMember)
 	mux.HandleFunc("POST /api/locations/{location_id}/members", apiCfg.handlerAddLocationMember)
@@ -92,6 +97,8 @@ func main() {
 	mux.HandleFunc("GET /api/search/locations/", apiCfg.handlerLocationsGetByOwner)
 	mux.HandleFunc("GET /api/search/movie_barcodes/{barcode}", apiCfg.handlerGetMovieByBarcode)
 	mux.HandleFunc("GET /api/search/movies", apiCfg.handlerSearchMovies)
+	mux.HandleFunc("GET /api/search/show_barcodes/{barcode}", apiCfg.handlerGetShowByBarcode)
+	mux.HandleFunc("GET /api/search/shows", apiCfg.handlerSearchShows)
 
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 

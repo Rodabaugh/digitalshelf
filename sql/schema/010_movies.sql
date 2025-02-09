@@ -9,8 +9,9 @@ generated always as (
     setweight(to_tsvector('simple',director), 'D') :: tsvector
 ) stored;
 
-create index idx_search on movies using GIN(search);
+create index idx_movies_search on movies using GIN(search);
+
 -- +goose Down
+drop index idx_movies_search;
 alter table movies
 drop column search;
-drop index idx_search;
