@@ -302,16 +302,28 @@ func (q *Queries) GetMoviesByShelf(ctx context.Context, shelfID uuid.UUID) ([]Mo
 }
 
 const searchMovies = `-- name: SearchMovies :many
-SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id,
+SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id,
     CAST(
         ts_rank(search, websearch_to_tsquery('english', $1)) + 
         ts_rank(search, websearch_to_tsquery('simple', $1)) AS float8
     ) AS rank
 FROM movies
+INNER JOIN shelves
+ON movies.shelf_id = shelves.id
+INNER JOIN cases
+ON shelves.case_id = cases.id
+INNER JOIN locations
+ON cases.location_id = locations.id
 WHERE search @@ websearch_to_tsquery('english', $1)
 OR search @@ websearch_to_tsquery('simple', $1)
+AND locations.id = $2
 ORDER BY rank DESC
 `
+
+type SearchMoviesParams struct {
+	WebsearchToTsquery string
+	ID                 uuid.UUID
+}
 
 type SearchMoviesRow struct {
 	ID          uuid.UUID
@@ -328,8 +340,8 @@ type SearchMoviesRow struct {
 	Rank        float64
 }
 
-func (q *Queries) SearchMovies(ctx context.Context, websearchToTsquery string) ([]SearchMoviesRow, error) {
-	rows, err := q.db.QueryContext(ctx, searchMovies, websearchToTsquery)
+func (q *Queries) SearchMovies(ctx context.Context, arg SearchMoviesParams) ([]SearchMoviesRow, error) {
+	rows, err := q.db.QueryContext(ctx, searchMovies, arg.WebsearchToTsquery, arg.ID)
 	if err != nil {
 		return nil, err
 	}

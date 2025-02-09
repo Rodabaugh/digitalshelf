@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Rodabaugh/digitalshelf/internal/database"
 	"github.com/google/uuid"
 )
 
@@ -214,11 +215,31 @@ func (cfg *apiConfig) handlerMoviesGetByLocation(w http.ResponseWriter, r *http.
 
 func (cfg *apiConfig) handlerSearchMovies(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		Query string `json:"query"`
+		LocationID string `json:"location_id"`
+		Query      string `json:"query"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload", err)
+		return
+	}
+
+	locationIDString := requestBody.LocationID
+	if locationIDString == "" {
+		respondWithError(w, http.StatusBadRequest, "No location id was provided", fmt.Errorf("no location id was provided"))
+		return
+	}
+
+	locationID, err := uuid.Parse(locationIDString)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid location ID", err)
+		return
+	}
+
+	// Validate user is permitted to search movies for the location.
+	err = cfg.authorizeMember(locationID, *r)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "User is not authorized to search movies for this location", err)
 		return
 	}
 
@@ -228,9 +249,12 @@ func (cfg *apiConfig) handlerSearchMovies(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	dbMovies, err := cfg.db.SearchMovies(r.Context(), query)
+	dbMovies, err := cfg.db.SearchMovies(r.Context(), database.SearchMoviesParams{
+		WebsearchToTsquery: query,
+		ID:                 locationID,
+	})
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Unable to search movies", err)
+		respondWithError(w, http.StatusNotFound, "No movies found for that location", err)
 		return
 	}
 
