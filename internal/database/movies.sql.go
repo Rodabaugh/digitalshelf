@@ -375,3 +375,52 @@ func (q *Queries) SearchMovies(ctx context.Context, arg SearchMoviesParams) ([]S
 	}
 	return items, nil
 }
+
+const updateMovie = `-- name: UpdateMovie :one
+UPDATE movies
+SET updated_at = NOW(), title = $2, genre = $3, actors = $4, writer = $5, director = $6, release_date = $7, barcode = $8, shelf_id = $9
+WHERE id = $1
+RETURNING id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search
+`
+
+type UpdateMovieParams struct {
+	ID          uuid.UUID
+	Title       string
+	Genre       string
+	Actors      string
+	Writer      string
+	Director    string
+	ReleaseDate time.Time
+	Barcode     string
+	ShelfID     uuid.UUID
+}
+
+func (q *Queries) UpdateMovie(ctx context.Context, arg UpdateMovieParams) (Movie, error) {
+	row := q.db.QueryRowContext(ctx, updateMovie,
+		arg.ID,
+		arg.Title,
+		arg.Genre,
+		arg.Actors,
+		arg.Writer,
+		arg.Director,
+		arg.ReleaseDate,
+		arg.Barcode,
+		arg.ShelfID,
+	)
+	var i Movie
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Title,
+		&i.Genre,
+		&i.Actors,
+		&i.Writer,
+		&i.Director,
+		&i.ReleaseDate,
+		&i.Barcode,
+		&i.ShelfID,
+		&i.Search,
+	)
+	return i, err
+}

@@ -745,6 +745,9 @@ Response body:
 ]
 ```
 
+### PUT /api/movies/{movie_id}
+Not documented yet. 
+
 ## Shows
 
 ### POST /api/shows

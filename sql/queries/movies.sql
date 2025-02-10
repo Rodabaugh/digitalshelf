@@ -52,3 +52,9 @@ WHERE search @@ websearch_to_tsquery('english', $1)
 OR search @@ websearch_to_tsquery('simple', $1)
 AND locations.id = $2
 ORDER BY rank DESC;
+
+-- name: UpdateMovie :one
+UPDATE movies
+SET updated_at = NOW(), title = $2, genre = $3, actors = $4, writer = $5, director = $6, release_date = $7, barcode = $8, shelf_id = $9
+WHERE id = $1
+RETURNING *;
