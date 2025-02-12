@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,7 +23,9 @@ type apiConfig struct {
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Using environment variables.")
+	} else {
+		fmt.Println("Loaded .env file.")
 	}
 
 	port := os.Getenv("PORT")
