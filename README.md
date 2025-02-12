@@ -61,6 +61,14 @@ Once the backend server is running, you can setup your server to run the backend
 
 At this point, the DigitalShelf backend should be running on your server. From here, you can use the CLI frontend (<https://github.com/Rodabaugh/digitalshelf-cli/>) to interact with the backend, or write your own frontend.
 
+# Docker
+
+There is also a Docker image for the backend. You will still need to setup the database using Goose, and the same environment variables should be specified. Environment variables can either be specified inline with the docker run command, or you can import them using the `--env-file` argument.
+
+Example: `docker run -p 8080:8080 --env-file ./.env digitalshelf`
+
+The docker image can be found here at <https://hub.docker.com/repository/docker/rodabaugh/digitalshelf/general> and can be pulled using `docker pull rodabaugh/digitalshelf:latest`
+
 # API Endpoints
 
 ## Design Overview
