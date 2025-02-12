@@ -35,6 +35,8 @@ JWT_SECRET="ALItvAPa64TLZ4wjqWsaiVW3ZrQ7ZT209sAkIsos8K3p6ldeMb+K5Ji5j90kI4cQ
 k0I6WY6KgXALHP7EjeLXOw=="
 ```
 
+A port may also be specified using ```PORT="1234"```. If a port is not specified, it will default to 8080.
+
 ## Setting up the database
 
 Goose is used to manage the database migrations. Install goose with `go install github.com/pressly/goose/v3/cmd/goose@latest`

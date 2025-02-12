@@ -20,18 +20,22 @@ type apiConfig struct {
 }
 
 func main() {
-	const filepathRoot = "."
-	const port = "8080"
-
 	godotenv.Load()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
 		log.Fatal("DB_URL must be set")
 	}
+
 	platform := os.Getenv("PLATFORM")
 	if platform != "dev" && platform != "prod" {
 		log.Fatal("PLATFORM must be set to either dev or prod")
 	}
+
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable is not set")
@@ -110,6 +114,6 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	log.Printf("Serving files from %s on port: %s\n", filepathRoot, port)
+	log.Printf("Serving DigitalShelf backend on port: %s\n", port)
 	log.Fatal(server.ListenAndServe())
 }
