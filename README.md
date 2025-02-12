@@ -31,13 +31,13 @@ To run this project, you will need:
 
 Environment variables are used for configuration. Create a .env file in the root of the project dir. You need to specify your DB_URL, PLATFORM, and JWT_SECRET. DB_URL is the url for your database. Platform can either be "prod" or "dev". You can generate your JWT_SECRET with `openssl rand -base64 64`. Your `.env` file should look something like the one below. Please be sure to create your own JWT_SECRET and use your own DB_URL.
 ```
-PLATFORM="prod"
+PLATFORM=prod
 DB_URL="postgres://postgresUser:postgresPass@localhost:5432/digitalshelf?sslmode=disable"
 JWT_SECRET="ALItvAPa64TLZ4wjqWsaiVW3ZrQ7ZT209sAkIsos8K3p6ldeMb+K5Ji5j90kI4cQ
 k0I6WY6KgXALHP7EjeLXOw=="
 ```
 
-A port may also be specified using ```PORT="1234"```. If a port is not specified, it will default to 8080.
+A port may also be specified using ```PORT=1234```. If a port is not specified, it will default to 8080.
 
 ## Setting up the database
 
