@@ -61,6 +61,10 @@ func (cfg *apiConfig) handlerShowCreate(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	if params.Season < -2147483648 || params.Season > 2147483647 {
+		respondWithError(w, http.StatusBadRequest, "Invalid season provided.", nil)
+	}
+
 	show, err := cfg.db.CreateShow(r.Context(), database.CreateShowParams{
 		Title:       params.Title,
 		Season:      int32(params.Season),
