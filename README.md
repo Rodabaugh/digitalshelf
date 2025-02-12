@@ -6,6 +6,8 @@ This project is still a work in progress and currently only supports movies, but
 
 This project was designed for personal use, but has a good foundation that supports many users and locations. The same backend server could be used to track library items across a great many locations with a large number of users. The backend is built in Go and uses a PostgreSQL database, and is very fast.
 
+![code tests badge](https://github.com/rodabaugh/digitalshelf/actions/workflows/ci.yml/badge.svg)
+
 # Frontend/Client
 
 This is just the backend of the application, but I have also written a CLI frontend for the application. I would like to create a webapp interface or a mobile app for this at some point, but haven't gotten to that point yet. If you would like to create your own frontend, please feel free to do so. Documentation for the REST API can be found below.
