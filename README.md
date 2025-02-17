@@ -2,11 +2,13 @@
 
 Digital Shelf is a RESTful API backend that is used to inventory items on shelves. The idea being that it'll help you know what books, movies, music, and TV shows that you have on your shelves. It will also tell you where each item is located. This allows for keeping track of the items in your personal library/collection. I am also planning on adding a wishlist feature, so that you'll know what items you would like to get for your collection. 
 
-This project is still a work in progress and currently only supports movies, but support for other items is in the works.
-
-This project was designed for personal use, but has a good foundation that supports many users and locations. The same backend server could be used to track library items across a great many locations with a large number of users. The backend is built in Go and uses a PostgreSQL database, and is very fast.
+While this project was built for personal use it has a good foundation that supports many users and locations. The same backend server could be used to track library items across a great many locations with a large number of users. The backend is built in Go and uses a PostgreSQL database, and is very fast.
 
 ![code tests badge](https://github.com/rodabaugh/digitalshelf/actions/workflows/ci.yml/badge.svg)
+
+## Why
+
+I enjoy physical media, and have a large collection. When shopping for new media at stores, I ran into an issue knowing what I already own. DigitalShelf was created to give me a tool to keep track of what I own, and where it is. DigitalShelf prevents buying duplicate copies of things that I already own, and allows me to know which shelf each item is on.
 
 # Frontend/Client
 
@@ -67,7 +69,7 @@ There is also a Docker image for the backend. You will still need to setup the d
 
 Example: `docker run -p 8080:8080 --env-file ./.env digitalshelf`
 
-The docker image can be found here at <https://hub.docker.com/repository/docker/rodabaugh/digitalshelf/general> and can be pulled using `docker pull rodabaugh/digitalshelf:latest`
+The docker image can be found here <https://hub.docker.com/repository/docker/rodabaugh/digitalshelf/general> and can be pulled using `docker pull rodabaugh/digitalshelf:latest`
 
 # API Endpoints
 
