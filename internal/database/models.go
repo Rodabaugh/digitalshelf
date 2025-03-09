@@ -67,6 +67,20 @@ type Movie struct {
 	Search      interface{}
 }
 
+type Music struct {
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Title       string
+	Artist      string
+	Genre       string
+	ReleaseDate time.Time
+	Barcode     string
+	Format      string
+	ShelfID     uuid.UUID
+	Search      interface{}
+}
+
 type RefreshToken struct {
 	Token     string
 	CreatedAt time.Time
