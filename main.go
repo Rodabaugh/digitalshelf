@@ -80,6 +80,8 @@ func main() {
 	mux.HandleFunc("PUT /api/movies/{movie_id}", apiCfg.handlerMoviesUpdate)
 	mux.HandleFunc("POST /api/shows", apiCfg.handlerShowCreate)
 	mux.HandleFunc("GET /api/shows", apiCfg.handlerShowsGet)
+	mux.HandleFunc("POST /api/books", apiCfg.handlerBookCreate)
+	mux.HandleFunc("GET /api/books", apiCfg.handlerBooksGet)
 
 	mux.HandleFunc("GET /api/users", apiCfg.handlerUsersGet)
 	mux.HandleFunc("GET /api/users/{user_id}", apiCfg.handlerUserGetByID)
@@ -92,6 +94,7 @@ func main() {
 	mux.HandleFunc("GET /api/locations/{location_id}/cases", apiCfg.handlerCasesGetByLocation)
 	mux.HandleFunc("GET /api/locations/{location_id}/movies", apiCfg.handlerMoviesGetByLocation)
 	mux.HandleFunc("GET /api/locations/{location_id}/shows", apiCfg.handlerShowsGetByLocation)
+	mux.HandleFunc("GET /api/locations/{location_id}/books", apiCfg.handlerBooksGetByLocation)
 	mux.HandleFunc("GET /api/cases/{case_id}", apiCfg.handlerCaseGetByID)
 	mux.HandleFunc("GET /api/cases/{case_id}/shelves", apiCfg.handlerShelvesGetByCase)
 	mux.HandleFunc("GET /api/shelves/{shelf_id}", apiCfg.handlerShelfGetByID)
@@ -99,6 +102,8 @@ func main() {
 	mux.HandleFunc("GET /api/movies/{movie_id}", apiCfg.handlerMovieGetByID)
 	mux.HandleFunc("GET /api/shelves/{shelf_id}/shows", apiCfg.handlerShowsGetByShelf)
 	mux.HandleFunc("GET /api/shows/{show_id}", apiCfg.handlerShowGetByID)
+	mux.HandleFunc("GET /api/shelves/{shelf_id}/books", apiCfg.handlerBooksGetByShelf)
+	mux.HandleFunc("GET /api/books/{book_id}", apiCfg.handlerBookGetByID)
 
 	mux.HandleFunc("DELETE /api/locations/{location_id}/members/{user_id}", apiCfg.handlerRemoveLocationMember)
 	mux.HandleFunc("POST /api/locations/{location_id}/members", apiCfg.handlerAddLocationMember)
@@ -111,6 +116,8 @@ func main() {
 	mux.HandleFunc("GET /api/search/movies", apiCfg.handlerSearchMovies)
 	mux.HandleFunc("GET /api/search/show_barcodes/{barcode}", apiCfg.handlerGetShowByBarcode)
 	mux.HandleFunc("GET /api/search/shows", apiCfg.handlerSearchShows)
+	mux.HandleFunc("GET /api/search/book_barcodes/{barcode}", apiCfg.handlerGetBookByBarcode)
+	mux.HandleFunc("GET /api/search/books", apiCfg.handlerSearchBooks)
 
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 
