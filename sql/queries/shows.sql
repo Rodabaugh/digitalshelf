@@ -1,7 +1,7 @@
 -- name: CreateShow :one
-INSERT INTO shows (id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id)
+INSERT INTO shows (id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, format, shelf_id)
 VALUES (
-    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9
+    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
 ) RETURNING *;
 
 -- name: GetShows :many
@@ -35,7 +35,7 @@ JOIN shows ON shelves.id = shows.shelf_id
 WHERE shows.id = $1;
 
 -- name: SearchShows :many
-SELECT shows.id, shows.created_at, shows.updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id,
+SELECT shows.id, shows.created_at, shows.updated_at, title, season, genre, actors, writer, director, release_date, barcode, format, shelf_id,
     CAST(
         ts_rank(search, websearch_to_tsquery('english', $1)) + 
         ts_rank(search, websearch_to_tsquery('simple', $1)) AS float8

@@ -13,21 +13,22 @@ import (
 )
 
 const createShow = `-- name: CreateShow :one
-INSERT INTO shows (id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id)
+INSERT INTO shows (id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, format, shelf_id)
 VALUES (
-    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9
-) RETURNING id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search
+    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+) RETURNING id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, format
 `
 
 type CreateShowParams struct {
 	Title       string
-	Season      int32
+	Season      string
 	Genre       string
 	Actors      string
 	Writer      string
 	Director    string
 	ReleaseDate time.Time
 	Barcode     string
+	Format      string
 	ShelfID     uuid.UUID
 }
 
@@ -41,6 +42,7 @@ func (q *Queries) CreateShow(ctx context.Context, arg CreateShowParams) (Show, e
 		arg.Director,
 		arg.ReleaseDate,
 		arg.Barcode,
+		arg.Format,
 		arg.ShelfID,
 	)
 	var i Show
@@ -58,12 +60,13 @@ func (q *Queries) CreateShow(ctx context.Context, arg CreateShowParams) (Show, e
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }
 
 const getShowByBarcode = `-- name: GetShowByBarcode :one
-SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM shows WHERE barcode = $1
+SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM shows WHERE barcode = $1
 `
 
 func (q *Queries) GetShowByBarcode(ctx context.Context, barcode string) (Show, error) {
@@ -83,12 +86,13 @@ func (q *Queries) GetShowByBarcode(ctx context.Context, barcode string) (Show, e
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }
 
 const getShowByID = `-- name: GetShowByID :one
-SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM shows WHERE id = $1
+SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM shows WHERE id = $1
 `
 
 func (q *Queries) GetShowByID(ctx context.Context, id uuid.UUID) (Show, error) {
@@ -108,6 +112,7 @@ func (q *Queries) GetShowByID(ctx context.Context, id uuid.UUID) (Show, error) {
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }
@@ -134,7 +139,7 @@ func (q *Queries) GetShowLocation(ctx context.Context, id uuid.UUID) (GetShowLoc
 }
 
 const getShows = `-- name: GetShows :many
-SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM shows
+SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM shows
 `
 
 func (q *Queries) GetShows(ctx context.Context) ([]Show, error) {
@@ -160,6 +165,7 @@ func (q *Queries) GetShows(ctx context.Context) ([]Show, error) {
 			&i.Barcode,
 			&i.ShelfID,
 			&i.Search,
+			&i.Format,
 		); err != nil {
 			return nil, err
 		}
@@ -175,7 +181,7 @@ func (q *Queries) GetShows(ctx context.Context) ([]Show, error) {
 }
 
 const getShowsByLocation = `-- name: GetShowsByLocation :many
-SELECT shows.id, shows.created_at, shows.updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, shelves.id, shelves.created_at, shelves.updated_at, shelves.name, case_id, cases.id, cases.created_at, cases.updated_at, cases.name, location_id, locations.id, locations.created_at, locations.updated_at, locations.name, owner_id FROM shows
+SELECT shows.id, shows.created_at, shows.updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, format, shelves.id, shelves.created_at, shelves.updated_at, shelves.name, case_id, cases.id, cases.created_at, cases.updated_at, cases.name, location_id, locations.id, locations.created_at, locations.updated_at, locations.name, owner_id FROM shows
 INNER JOIN shelves
 ON shows.shelf_id = shelves.id
 INNER JOIN cases
@@ -190,7 +196,7 @@ type GetShowsByLocationRow struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Title       string
-	Season      int32
+	Season      string
 	Genre       string
 	Actors      string
 	Writer      string
@@ -199,6 +205,7 @@ type GetShowsByLocationRow struct {
 	Barcode     string
 	ShelfID     uuid.UUID
 	Search      interface{}
+	Format      string
 	ID_2        uuid.UUID
 	CreatedAt_2 time.Time
 	UpdatedAt_2 time.Time
@@ -239,6 +246,7 @@ func (q *Queries) GetShowsByLocation(ctx context.Context, id uuid.UUID) ([]GetSh
 			&i.Barcode,
 			&i.ShelfID,
 			&i.Search,
+			&i.Format,
 			&i.ID_2,
 			&i.CreatedAt_2,
 			&i.UpdatedAt_2,
@@ -269,7 +277,7 @@ func (q *Queries) GetShowsByLocation(ctx context.Context, id uuid.UUID) ([]GetSh
 }
 
 const getShowsByShelf = `-- name: GetShowsByShelf :many
-SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM shows WHERE shelf_id = $1
+SELECT id, created_at, updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM shows WHERE shelf_id = $1
 `
 
 func (q *Queries) GetShowsByShelf(ctx context.Context, shelfID uuid.UUID) ([]Show, error) {
@@ -295,6 +303,7 @@ func (q *Queries) GetShowsByShelf(ctx context.Context, shelfID uuid.UUID) ([]Sho
 			&i.Barcode,
 			&i.ShelfID,
 			&i.Search,
+			&i.Format,
 		); err != nil {
 			return nil, err
 		}
@@ -310,7 +319,7 @@ func (q *Queries) GetShowsByShelf(ctx context.Context, shelfID uuid.UUID) ([]Sho
 }
 
 const searchShows = `-- name: SearchShows :many
-SELECT shows.id, shows.created_at, shows.updated_at, title, season, genre, actors, writer, director, release_date, barcode, shelf_id,
+SELECT shows.id, shows.created_at, shows.updated_at, title, season, genre, actors, writer, director, release_date, barcode, format, shelf_id,
     CAST(
         ts_rank(search, websearch_to_tsquery('english', $1)) + 
         ts_rank(search, websearch_to_tsquery('simple', $1)) AS float8
@@ -338,13 +347,14 @@ type SearchShowsRow struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Title       string
-	Season      int32
+	Season      string
 	Genre       string
 	Actors      string
 	Writer      string
 	Director    string
 	ReleaseDate time.Time
 	Barcode     string
+	Format      string
 	ShelfID     uuid.UUID
 	Rank        float64
 }
@@ -370,6 +380,7 @@ func (q *Queries) SearchShows(ctx context.Context, arg SearchShowsParams) ([]Sea
 			&i.Director,
 			&i.ReleaseDate,
 			&i.Barcode,
+			&i.Format,
 			&i.ShelfID,
 			&i.Rank,
 		); err != nil {

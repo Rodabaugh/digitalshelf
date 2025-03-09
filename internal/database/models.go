@@ -104,7 +104,7 @@ type Show struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Title       string
-	Season      int32
+	Season      string
 	Genre       string
 	Actors      string
 	Writer      string
@@ -113,6 +113,7 @@ type Show struct {
 	Barcode     string
 	ShelfID     uuid.UUID
 	Search      interface{}
+	Format      string
 }
 
 type User struct {
