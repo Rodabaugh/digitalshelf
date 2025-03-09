@@ -13,11 +13,11 @@ import (
 )
 
 const createMovie = `-- name: CreateMovie :one
-INSERT INTO movies (id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id)
+INSERT INTO movies (id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, format, shelf_id)
 VALUES (
-    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8
+    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search
+RETURNING id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format
 `
 
 type CreateMovieParams struct {
@@ -28,6 +28,7 @@ type CreateMovieParams struct {
 	Director    string
 	ReleaseDate time.Time
 	Barcode     string
+	Format      string
 	ShelfID     uuid.UUID
 }
 
@@ -40,6 +41,7 @@ func (q *Queries) CreateMovie(ctx context.Context, arg CreateMovieParams) (Movie
 		arg.Director,
 		arg.ReleaseDate,
 		arg.Barcode,
+		arg.Format,
 		arg.ShelfID,
 	)
 	var i Movie
@@ -56,12 +58,13 @@ func (q *Queries) CreateMovie(ctx context.Context, arg CreateMovieParams) (Movie
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }
 
 const getMovieByBarcode = `-- name: GetMovieByBarcode :one
-SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM movies WHERE barcode = $1
+SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM movies WHERE barcode = $1
 `
 
 func (q *Queries) GetMovieByBarcode(ctx context.Context, barcode string) (Movie, error) {
@@ -80,12 +83,13 @@ func (q *Queries) GetMovieByBarcode(ctx context.Context, barcode string) (Movie,
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }
 
 const getMovieByID = `-- name: GetMovieByID :one
-SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM movies WHERE id = $1
+SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM movies WHERE id = $1
 `
 
 func (q *Queries) GetMovieByID(ctx context.Context, id uuid.UUID) (Movie, error) {
@@ -104,6 +108,7 @@ func (q *Queries) GetMovieByID(ctx context.Context, id uuid.UUID) (Movie, error)
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }
@@ -130,7 +135,7 @@ func (q *Queries) GetMovieLocation(ctx context.Context, id uuid.UUID) (GetMovieL
 }
 
 const getMovies = `-- name: GetMovies :many
-SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM movies
+SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM movies
 `
 
 func (q *Queries) GetMovies(ctx context.Context) ([]Movie, error) {
@@ -155,6 +160,7 @@ func (q *Queries) GetMovies(ctx context.Context) ([]Movie, error) {
 			&i.Barcode,
 			&i.ShelfID,
 			&i.Search,
+			&i.Format,
 		); err != nil {
 			return nil, err
 		}
@@ -170,7 +176,7 @@ func (q *Queries) GetMovies(ctx context.Context) ([]Movie, error) {
 }
 
 const getMoviesByLocation = `-- name: GetMoviesByLocation :many
-SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, shelves.id, shelves.created_at, shelves.updated_at, shelves.name, case_id, cases.id, cases.created_at, cases.updated_at, cases.name, location_id, locations.id, locations.created_at, locations.updated_at, locations.name, owner_id FROM movies
+SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format, shelves.id, shelves.created_at, shelves.updated_at, shelves.name, case_id, cases.id, cases.created_at, cases.updated_at, cases.name, location_id, locations.id, locations.created_at, locations.updated_at, locations.name, owner_id FROM movies
 INNER JOIN shelves
 ON movies.shelf_id = shelves.id
 INNER JOIN cases
@@ -193,6 +199,7 @@ type GetMoviesByLocationRow struct {
 	Barcode     string
 	ShelfID     uuid.UUID
 	Search      interface{}
+	Format      string
 	ID_2        uuid.UUID
 	CreatedAt_2 time.Time
 	UpdatedAt_2 time.Time
@@ -232,6 +239,7 @@ func (q *Queries) GetMoviesByLocation(ctx context.Context, id uuid.UUID) ([]GetM
 			&i.Barcode,
 			&i.ShelfID,
 			&i.Search,
+			&i.Format,
 			&i.ID_2,
 			&i.CreatedAt_2,
 			&i.UpdatedAt_2,
@@ -262,7 +270,7 @@ func (q *Queries) GetMoviesByLocation(ctx context.Context, id uuid.UUID) ([]GetM
 }
 
 const getMoviesByShelf = `-- name: GetMoviesByShelf :many
-SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search FROM movies WHERE shelf_id = $1
+SELECT id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format FROM movies WHERE shelf_id = $1
 `
 
 func (q *Queries) GetMoviesByShelf(ctx context.Context, shelfID uuid.UUID) ([]Movie, error) {
@@ -287,6 +295,7 @@ func (q *Queries) GetMoviesByShelf(ctx context.Context, shelfID uuid.UUID) ([]Mo
 			&i.Barcode,
 			&i.ShelfID,
 			&i.Search,
+			&i.Format,
 		); err != nil {
 			return nil, err
 		}
@@ -302,7 +311,7 @@ func (q *Queries) GetMoviesByShelf(ctx context.Context, shelfID uuid.UUID) ([]Mo
 }
 
 const searchMovies = `-- name: SearchMovies :many
-SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id,
+SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, format, shelf_id,
     CAST(
         ts_rank(search, websearch_to_tsquery('english', $1)) + 
         ts_rank(search, websearch_to_tsquery('simple', $1)) AS float8
@@ -336,6 +345,7 @@ type SearchMoviesRow struct {
 	Director    string
 	ReleaseDate time.Time
 	Barcode     string
+	Format      string
 	ShelfID     uuid.UUID
 	Rank        float64
 }
@@ -360,6 +370,7 @@ func (q *Queries) SearchMovies(ctx context.Context, arg SearchMoviesParams) ([]S
 			&i.Director,
 			&i.ReleaseDate,
 			&i.Barcode,
+			&i.Format,
 			&i.ShelfID,
 			&i.Rank,
 		); err != nil {
@@ -378,9 +389,9 @@ func (q *Queries) SearchMovies(ctx context.Context, arg SearchMoviesParams) ([]S
 
 const updateMovie = `-- name: UpdateMovie :one
 UPDATE movies
-SET updated_at = NOW(), title = $2, genre = $3, actors = $4, writer = $5, director = $6, release_date = $7, barcode = $8, shelf_id = $9
+SET updated_at = NOW(), title = $2, genre = $3, actors = $4, writer = $5, director = $6, release_date = $7, barcode = $8, format = $9, shelf_id = $10
 WHERE id = $1
-RETURNING id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search
+RETURNING id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id, search, format
 `
 
 type UpdateMovieParams struct {
@@ -392,6 +403,7 @@ type UpdateMovieParams struct {
 	Director    string
 	ReleaseDate time.Time
 	Barcode     string
+	Format      string
 	ShelfID     uuid.UUID
 }
 
@@ -405,6 +417,7 @@ func (q *Queries) UpdateMovie(ctx context.Context, arg UpdateMovieParams) (Movie
 		arg.Director,
 		arg.ReleaseDate,
 		arg.Barcode,
+		arg.Format,
 		arg.ShelfID,
 	)
 	var i Movie
@@ -421,6 +434,7 @@ func (q *Queries) UpdateMovie(ctx context.Context, arg UpdateMovieParams) (Movie
 		&i.Barcode,
 		&i.ShelfID,
 		&i.Search,
+		&i.Format,
 	)
 	return i, err
 }

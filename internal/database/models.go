@@ -65,6 +65,7 @@ type Movie struct {
 	Barcode     string
 	ShelfID     uuid.UUID
 	Search      interface{}
+	Format      string
 }
 
 type Music struct {
