@@ -17,6 +17,7 @@ type Movie struct {
 	Writer      string    `json:"writer"`
 	Director    string    `json:"director"`
 	Barcode     string    `json:"barcode"`
+	Format      string    `json:"format"`
 	ShelfID     uuid.UUID `json:"shelf_id"`
 	ReleaseDate time.Time `json:"release_date"`
 	CreatedAt   time.Time `json:"created_at"`
@@ -31,6 +32,7 @@ func (cfg *apiConfig) handlerMovieCreate(w http.ResponseWriter, r *http.Request)
 		Writer      string    `json:"writer"`
 		Director    string    `json:"director"`
 		Barcode     string    `json:"barcode"`
+		Format      string    `json:"format"`
 		ShelfID     uuid.UUID `json:"shelf_id"`
 		ReleaseDate time.Time `json:"release_date"`
 	}
@@ -66,6 +68,7 @@ func (cfg *apiConfig) handlerMovieCreate(w http.ResponseWriter, r *http.Request)
 		Writer:      params.Writer,
 		Director:    params.Director,
 		Barcode:     params.Barcode,
+		Format:      params.Format,
 		ShelfID:     params.ShelfID,
 		ReleaseDate: params.ReleaseDate,
 	})
@@ -83,6 +86,7 @@ func (cfg *apiConfig) handlerMovieCreate(w http.ResponseWriter, r *http.Request)
 			Writer:      movie.Writer,
 			Director:    movie.Director,
 			Barcode:     movie.Barcode,
+			Format:      movie.Format,
 			ShelfID:     movie.ShelfID,
 			ReleaseDate: movie.ReleaseDate,
 			CreatedAt:   movie.CreatedAt,

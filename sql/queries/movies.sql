@@ -1,7 +1,7 @@
 -- name: CreateMovie :one
-INSERT INTO movies (id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id)
+INSERT INTO movies (id, created_at, updated_at, title, genre, actors, writer, director, release_date, barcode, format, shelf_id)
 VALUES (
-    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8
+    gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
 RETURNING *;
 
@@ -36,7 +36,7 @@ JOIN movies ON shelves.id = movies.shelf_id
 WHERE movies.id = $1;
 
 -- name: SearchMovies :many
-SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, shelf_id,
+SELECT movies.id, movies.created_at, movies.updated_at, title, genre, actors, writer, director, release_date, barcode, format, shelf_id,
     CAST(
         ts_rank(search, websearch_to_tsquery('english', $1)) + 
         ts_rank(search, websearch_to_tsquery('simple', $1)) AS float8
@@ -55,6 +55,6 @@ ORDER BY rank DESC;
 
 -- name: UpdateMovie :one
 UPDATE movies
-SET updated_at = NOW(), title = $2, genre = $3, actors = $4, writer = $5, director = $6, release_date = $7, barcode = $8, shelf_id = $9
+SET updated_at = NOW(), title = $2, genre = $3, actors = $4, writer = $5, director = $6, release_date = $7, barcode = $8, format = $9, shelf_id = $10
 WHERE id = $1
 RETURNING *;
