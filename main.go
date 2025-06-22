@@ -63,9 +63,7 @@ func main() {
 
 	mux.HandleFunc("GET /admin/healthz", readinessEndpoint)
 
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		MainPage(&apiCfg).Render(r.Context(), w)
-	})
+	mux.HandleFunc("GET /", apiCfg.webApp)
 
 	mux.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
 		Login(false).Render(r.Context(), w)

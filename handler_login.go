@@ -116,6 +116,7 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
         	SameSite: http.SameSiteLaxMode,	
 		}
 		http.SetCookie(w, &accessTokenCookie)
+		
 		refreshTokenCookie := http.Cookie{
 		    Name:     "refreshToken",
         	Value:    refreshToken,
@@ -126,6 +127,7 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
         	SameSite: http.SameSiteLaxMode,
 		}
 		http.SetCookie(w, &refreshTokenCookie)
+		
 		LoginSuccess().Render(r.Context(), w)
 	}
 

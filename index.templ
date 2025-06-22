@@ -106,13 +106,24 @@ templ login_bar(){
 	</div>
 }
 
-templ MainPage(cfg *apiConfig){
+templ MainPage(appState *AppState){
     <!DOCTYPE html>
     <html>
         @head()
         <body class={base()}>
             <center>@header()</center>
 			<center>@login_bar()</center>
+			{appState.userID}
         </body>
     </html>
+}
+
+templ locations(locations []Location){
+	if
+	for _, location := range locations{
+		<div class="location">
+			<hr>
+			<h3>{location.Name}</h3>
+		</div>
+	}
 }
