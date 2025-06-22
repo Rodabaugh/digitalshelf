@@ -32,25 +32,38 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Something went wrong", err)
 		log.Printf("Error decoding parameters: %s", err)
+		return
 	}
 
 	if len(parms.Email) == 0 {
 		respondWithError(w, http.StatusBadRequest, "An email address must be provided", err)
+		return
 	}
 
 	if len(parms.Password) == 0 {
 		respondWithError(w, http.StatusBadRequest, "A password is required", err)
+		return
 	}
 
 	user, err := apiCfg.db.GetUserByEmail(r.Context(), parms.Email)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Was unable to find user.", err)
+		if r.Header.Get("Accept") == "application/json" {
+			respondWithError(w, http.StatusNotFound, "Incorrect email or password", err)
+		} else {
+			Login(true).Render(r.Context(), w)
+		}
 		log.Printf("Unable to get user from database: %s", err)
+		return
 	}
 
 	err = auth.CheckPasswordHash(parms.Password, user.HashedPassword)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Incorrect email or password", nil)
+		if r.Header.Get("Accept") == "application/json" {
+			respondWithError(w, http.StatusNotFound, "Incorrect email or password", err)
+		} else {
+			Login(true).Render(r.Context(), w)
+		}
+		log.Printf("Failed Login Attempt: %s", err)
 		return
 	}
 
@@ -93,6 +106,26 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 			RefreshToken: refreshToken,
 		})
 	} else {
+		accessTokenCookie := http.Cookie{
+	        Name:     "accessToken",
+        	Value:    accessToken,
+        	Path:     "/",
+        	MaxAge:   3600,
+        	HttpOnly: true,
+        	Secure:   true,
+        	SameSite: http.SameSiteLaxMode,	
+		}
+		http.SetCookie(w, &accessTokenCookie)
+		refreshTokenCookie := http.Cookie{
+		    Name:     "refreshToken",
+        	Value:    refreshToken,
+        	Path:     "/",
+        	MaxAge:   86400,
+        	HttpOnly: true,
+        	Secure:   true,
+        	SameSite: http.SameSiteLaxMode,
+		}
+		http.SetCookie(w, &refreshTokenCookie)
 		LoginSuccess().Render(r.Context(), w)
 	}
 

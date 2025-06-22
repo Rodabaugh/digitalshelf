@@ -59,13 +59,13 @@ templ Register(){
 
 templ RegisterSuccess(){
 	<p>Account Created! Now please login.</p>
-	@Login()
+	@Login(false)
 }
 
-templ Login(){
+templ Login(failure bool){
 	<div id="login-form">
 		<form
-			hx-target="this"
+			hx-target="#login-bar-form"
 			hx-post="/api/login"
 			hx-ext="json-enc"
 		>
@@ -73,7 +73,7 @@ templ Login(){
 				type="text"
 				name="email"
 				placeholder="Email"
-				size="50"
+false				size="50"
 			/>
 			<input
 				type="password"
@@ -83,6 +83,9 @@ templ Login(){
 			/>
 			<button type="submit">Login</button>
 		</form>
+		if failure {
+			<p>Incorrect username or password. Please try again.</p>
+		}
 	</div>
 }
 

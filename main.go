@@ -68,7 +68,7 @@ func main() {
 	})
 
 	mux.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
-		Login().Render(r.Context(), w)
+		Login(false).Render(r.Context(), w)
 	})
 	
 	mux.HandleFunc("GET /register", func(w http.ResponseWriter, r *http.Request) {
