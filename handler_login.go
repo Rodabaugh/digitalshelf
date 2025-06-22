@@ -80,16 +80,21 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, response{
-		User: User{
-			ID:        user.ID,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-			Name:      user.Name,
-			Email:     user.Email,
-		},
-		Token:        accessToken,
-		RefreshToken: refreshToken,
-	})
+	if r.Header.Get("Accept") == "application/json" {
+		respondWithJSON(w, http.StatusOK, response{
+			User: User{
+				ID:        user.ID,
+				CreatedAt: user.CreatedAt,
+				UpdatedAt: user.UpdatedAt,
+				Name:      user.Name,
+				Email:     user.Email,
+			},
+			Token:        accessToken,
+			RefreshToken: refreshToken,
+		})
+	} else {
+		LoginSuccess().Render(r.Context(), w)
+	}
+
 	fmt.Println("Login successful")
 }

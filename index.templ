@@ -1,0 +1,115 @@
+package main
+
+css base() {
+    background-color: #191724;
+    color: #e0def4;
+    font-family: Monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-size: 1.5em;
+}
+
+templ head(){
+    <head>
+        <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+        <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+        <title>DigitalShelf</title>
+    </head>
+}
+
+templ header(){
+    <div style="line-height: .2;">
+        <h1 style="color:#f6c177">DigitalShelf</h1>
+        <h4 style="color:#ebbcba">A digital shelf management system.</h4>
+    </div>
+}
+
+templ Register(){
+	<div id="register-form">
+		<form
+			hx-target="this"
+			hx-post="/api/users"
+			hx-ext="json-enc"
+		>
+			<input
+				type="text"
+				name="name"
+				placeholder="Name"
+				size="50"
+			/>
+			<input
+				type="text"
+				name="email"
+				placeholder="Email"
+				size="50"
+			/>
+			<input
+				type="password"
+				name="password"
+				placeholder="Password"
+				size="50"
+			/>
+			<button type="submit">Login</button>
+		</form>
+	</div>
+}
+
+templ RegisterSuccess(){
+	<p>Account Created! Now please login.</p>
+	@Login()
+}
+
+templ Login(){
+	<div id="login-form">
+		<form
+			hx-target="this"
+			hx-post="/api/login"
+			hx-ext="json-enc"
+		>
+			<input
+				type="text"
+				name="email"
+				placeholder="Email"
+				size="50"
+			/>
+			<input
+				type="password"
+				name="password"
+				placeholder="Password"
+				size="50"
+			/>
+			<button type="submit">Login</button>
+		</form>
+	</div>
+}
+
+templ LoginSuccess(){
+	<p>Login Successful!</p>
+}
+
+templ login_bar(){
+	<div id=login-bar">
+		<button hx-get="/register" hx-target="#login-bar-form" hx-swap="innerHTML">
+        	Register!
+    	</button>
+		<button hx-get="/login" hx-target="#login-bar-form" hx-swap="innerHTML">
+        	Login!
+    	</button>
+		<div id="login-bar-form">
+		</div>
+	</div>
+}
+
+templ MainPage(cfg *apiConfig){
+    <!DOCTYPE html>
+    <html>
+        @head()
+        <body class={base()}>
+            <center>@header()</center>
+			<center>@login_bar()</center>
+        </body>
+    </html>
+}

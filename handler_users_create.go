@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -61,11 +62,17 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, response{
-		User: User{
-			ID:    user.ID,
-			Name:  user.Name,
-			Email: user.Email,
-		},
-	})
+	if r.Header.Get("Accept") == "application/json" {
+		respondWithJSON(w, http.StatusCreated, response{
+			User: User{
+				ID:    user.ID,
+				Name:  user.Name,
+				Email: user.Email,
+			},
+		})
+	} else {
+		RegisterSuccess().Render(r.Context(), w)
+	}
+
+	fmt.Printf("User %s Created\n", user.Email)
 }

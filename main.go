@@ -63,6 +63,18 @@ func main() {
 
 	mux.HandleFunc("GET /admin/healthz", readinessEndpoint)
 
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		MainPage(&apiCfg).Render(r.Context(), w)
+	})
+
+	mux.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
+		Login().Render(r.Context(), w)
+	})
+	
+	mux.HandleFunc("GET /register", func(w http.ResponseWriter, r *http.Request) {
+		Register().Render(r.Context(), w)
+	})
+	
 	mux.HandleFunc("POST /api/users", apiCfg.handlerUsersCreate)
 	mux.HandleFunc("PUT /api/users", apiCfg.handlerUsersUpdate)
 	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)
