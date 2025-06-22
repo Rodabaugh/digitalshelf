@@ -64,6 +64,8 @@ func main() {
 	mux.HandleFunc("GET /admin/healthz", readinessEndpoint)
 
 	mux.HandleFunc("GET /", apiCfg.webApp)
+	mux.HandleFunc("GET /users/{user_id}/locations", apiCfg.appGetUserLocations)
+	mux.HandleFunc("POST /locations", apiCfg.appCreateLocation)
 
 	mux.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
 		Login(false).Render(r.Context(), w)

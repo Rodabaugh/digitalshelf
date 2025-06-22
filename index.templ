@@ -106,6 +106,38 @@ templ login_bar(){
 	</div>
 }
 
+templ menuBar(appState *AppState){
+	<button hx-get={templ.URL("/users/" + appState.userID + "/locations")} hx-target="#app" hx-swap="innderHTML">Locations</button>
+}
+
+templ AppSuccessReply(){
+	<span>Success</span>
+}
+
+templ Locations(locations []UserLocation){
+	for _, location := range locations{
+		<div class="location">
+			<hr>
+			<h3>{location.LocationName}</h3>
+		</div>
+	}
+	<div id="new-location-form">
+		<form
+			hx-target="#new-location-form"
+			hx-post="/locations"
+			hx-ext="json-enc"
+		>
+			<input
+				type="text"
+				name="name"
+				placeholder="Name"
+				size="50"
+			/>
+			<button type="submit">Create</button>
+		</form>
+	</div>
+}
+
 templ MainPage(appState *AppState){
     <!DOCTYPE html>
     <html>
@@ -113,17 +145,12 @@ templ MainPage(appState *AppState){
         <body class={base()}>
             <center>@header()</center>
 			<center>@login_bar()</center>
-			{appState.userID}
+			if appState.userID != "00000000-0000-0000-0000-000000000000" {
+				@menuBar(appState)
+			}
+			<div id="app">
+			</div>
         </body>
     </html>
 }
 
-templ locations(locations []Location){
-	if
-	for _, location := range locations{
-		<div class="location">
-			<hr>
-			<h3>{location.Name}</h3>
-		</div>
-	}
-}
